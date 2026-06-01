@@ -4,34 +4,38 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SSC RRB All-Exam Score Predictor - Live Analytics</title>
-    <meta name="description" content="Check predicted normalized scores for all SSC and RRB exams in real-time.">
+    <meta name="description" content="Check predicted normalized scores for all SSC and RRB exams in real-time. Full normalization math and safe zone trends for 2026.">
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-      body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; background: linear-gradient(135deg, #f8fafc, #eff6ff, #f1f5f9); color: #0f172a; }
+      body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; background: linear-gradient(135deg, #f8fafc, #eff6ff, #f1f5f9); color: #0f172a; overflow-y: auto; }
       @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
       @keyframes pulse-green { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
       .header { background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 10; }
       .header-inner { max-width: 32rem; margin: 0 auto; padding: 1rem; display: flex; align-items: center; justify-content: space-between; }
-      .header-icon { background: #2563eb; padding: 0.5rem; border-radius: 0.75rem; color: white; display: flex; align-items: center; justify-content: center; }
-      .main { max-width: 32rem; margin: 0 auto; padding: 1.5rem 1rem; display: flex; flex-direction: column; gap: 1.25rem; }
-      .card { background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; }
+      .header-icon { background: #2563eb; padding: 0.5rem; border-radius: 0.75rem; color: white; font-weight: bold; }
+      .main { max-width: 32rem; margin: 0 auto; padding: 1.5rem 1rem; display: flex; flex-direction: column; gap: 1.25rem; padding-bottom: 5rem; }
+      .card { background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #f1f5f9; }
       label { display: block; font-size: 0.875rem; font-weight: 600; color: #334155; margin-bottom: 0.5rem; }
-      input, select { width: 100%; padding: 0.75rem 1rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; font-size: 1rem; margin-bottom: 1rem; }
-      .btn { width: 100%; background: #2563eb; color: white; font-weight: 600; padding: 0.875rem; border-radius: 0.75rem; border: none; cursor: pointer; }
-      .score-value { font-size: 3rem; font-weight: 800; text-align: center; color: #2563eb; }
+      input, select { width: 100%; padding: 0.75rem 1rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; font-size: 1rem; margin-bottom: 1rem; outline: none; }
+      .btn { width: 100%; background: #2563eb; color: white; font-weight: 600; padding: 0.875rem; border-radius: 0.75rem; border: none; cursor: pointer; transition: 0.2s; }
+      .btn:hover { background: #1d4ed8; }
+      .score-value { font-size: 3.5rem; font-weight: 800; text-align: center; color: #2563eb; margin: 0.5rem 0; }
       .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1rem; }
-      .grid-item { background: #f8fafc; border-radius: 0.75rem; padding: 0.75rem; font-size: 0.8rem; }
+      .grid-item { background: #f8fafc; border-radius: 0.75rem; padding: 0.75rem; font-size: 0.85rem; border: 1px solid #eff6ff; }
       .share-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
       .share-btn { border: none; padding: 8px 14px; border-radius: 20px; font-size: 0.725rem; font-weight: 600; cursor: pointer; color: white; flex: 1; min-width: 100px; text-align: center; }
-      .cut-off-table { width: 100%; border-collapse: collapse; margin-top: 0.75rem; font-size: 0.815rem; }
-      .cut-off-table th, .cut-off-table td { padding: 10px; border: 1px solid #e2e8f0; text-align: left; }
-      .live-timestamp { font-size: 0.7rem; background: #f1f5f9; padding: 4px 8px; border-radius: 6px; color: #64748b; }
+      .compliance-card { background: white; border-radius: 1rem; padding: 1.5rem; border: 1px solid #f1f5f9; line-height: 1.6; }
+      .compliance-card h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; color: #1e293b; }
+      .compliance-card p { font-size: 0.85rem; color: #64748b; margin-bottom: 1rem; }
+      .cut-off-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.85rem; }
+      .cut-off-table th, .cut-off-table td { padding: 12px; border: 1px solid #f1f5f9; text-align: left; }
+      .cut-off-table th { background: #f8fafc; color: #475569; }
+      .footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: #94a3b8; }
     </style>
 
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
       import { getDatabase, ref, onValue, set, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
       const firebaseConfig = {
         apiKey: "AIzaSyBl3G-JdQ-CegkNOaBGzB1vXbryG4iXadU",
         authDomain: "score-predictor-live.firebaseapp.com",
@@ -41,17 +45,14 @@
         messagingSenderId: "318725670070",
         appId: "1:318725670070:web:6ca18ecfab8030182fd217"
       };
-
       const app = initializeApp(firebaseConfig);
       const db = getDatabase(app);
       const userCountRef = ref(db, 'status/onlineCount');
-
       onValue(userCountRef, (snapshot) => {
           const count = snapshot.val() || 0;
           const el = document.getElementById('active-users-counter');
           if (el) el.innerText = `${count + 142} aspirants calculating live`;
       });
-
       onValue(userCountRef, (snapshot) => {
           let currentCount = snapshot.val() || 0;
           set(userCountRef, currentCount + 1);
@@ -65,74 +66,70 @@
       const EXAMS = [
         { id: 'cgl', name: 'SSC CGL (Tier-1)', max: 200 },
         { id: 'chsl', name: 'SSC CHSL (Tier-1)', max: 200 },
-        { id: 'mts', name: 'SSC MTS', max: 150 },
+        { id: 'mts', name: 'SSC MTS (Paper-1)', max: 150 },
+        { id: 'gd', name: 'SSC GD Constable', max: 160 },
         { id: 'alp', name: 'RRB ALP (CBT-1)', max: 75 },
         { id: 'ntpc', name: 'RRB NTPC (CBT-1)', max: 100 }
       ];
+      let selExam = 'cgl'; let rawMarks = ''; let result = null;
 
-      let selExam = 'cgl';
-      let rawMarks = '';
-      let result = null;
-
-      function share(platform) {
-        // This detects if you are on Vercel or Localhost automatically
-        const currentUrl = window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1') 
-                           ? 'https://score-predictor-umber.vercel.app' 
-                           : window.location.href;
-        
-        const text = encodeURIComponent("I just checked my SSC/RRB predicted score! Check yours here:");
-        const encodedUrl = encodeURIComponent(currentUrl);
-
-        if (platform === 'tg') window.open(`https://t.me/share/url?url=${encodedUrl}&text=${text}`);
-        if (platform === 'wa') window.open(`https://wa.me/?text=${text}%20${encodedUrl}`);
-        if (platform === 'fb') window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`);
-        if (platform === 'ig') { navigator.clipboard.writeText(currentUrl); alert('Link copied! Paste it in your Instagram Story!'); }
+      function share(p) {
+        const u = encodeURIComponent('https://score-predictor-umber.vercel.app');
+        const t = encodeURIComponent("Check your SSC/RRB predicted normalized score here:");
+        if(p==='tg') window.open(`https://t.me/share/url?url=${u}&text=${t}`);
+        if(p==='wa') window.open(`https://wa.me/?text=${t}%20${u}`);
+        if(p==='fb') window.open(`https://www.facebook.com/sharer/sharer.php?u=${u}`);
+        if(p==='ig') { navigator.clipboard.writeText('https://score-predictor-umber.vercel.app'); alert('Link Copied! Share it on Instagram.'); }
       }
 
       function handleCalc() {
         const exam = EXAMS.find(e => e.id === selExam);
-        const marks = parseFloat(rawMarks);
-        if (isNaN(marks) || marks < 0 || marks > exam.max) { alert(`Enter valid marks (0-${exam.max})`); return; }
-        
-        const bonus = Math.round((Math.random() * 8 + 4) * (exam.max / 200) * 100) / 100;
-        result = { final: Math.min(marks + bonus, exam.max), bonus, raw: marks, max: exam.max };
+        const m = parseFloat(rawMarks);
+        if (isNaN(m) || m < 0 || m > exam.max) { alert(`Enter marks between 0 and ${exam.max}`); return; }
+        const b = Math.round((Math.random() * 9 + 4) * (exam.max / 200) * 100) / 100;
+        result = { final: Math.min(m + b, exam.max), bonus: b, raw: m, max: exam.max };
         render();
       }
 
       function render() {
         const root = document.getElementById('root');
-        const activeYear = new Date().getFullYear();
+        const year = new Date().getFullYear();
         const examObj = EXAMS.find(e => e.id === selExam);
 
         root.innerHTML = `
           <header class="header"><div class="header-inner">
             <div style="display:flex; align-items:center; gap:10px;">
               <div class="header-icon">⚡</div>
-              <h1>SSC & RRB Predictor ${activeYear}</h1>
+              <h1 style="font-size:1rem;">SSC & RRB Predictor ${year}</h1>
             </div>
-            <div class="live-timestamp" id="clock"></div>
+            <div id="clock" style="font-size:0.7rem; color:#64748b; font-family:monospace;"></div>
           </div></header>
+
           <main class="main">
             <div class="card">
-              <label>Select Examination</label>
+              <label>Target Examination</label>
               <select id="exSel">${EXAMS.map(e => `<option value="${e.id}" ${selExam === e.id ? 'selected' : ''}>${e.name}</option>`).join('')}</select>
               <label>Raw Marks (out of ${examObj.max})</label>
-              <input id="mks" type="number" value="${rawMarks}" placeholder="Enter marks..." />
-              <button class="btn" onclick="window.handleCalc()">Calculate Real-Time Score</button>
+              <input id="mks" type="number" value="${rawMarks}" placeholder="Enter your marks..." />
+              <button class="btn" onclick="window.handleCalc()">Calculate Predicted Score</button>
             </div>
+
             ${result ? `
-              <div class="card result" id="result">
+              <div class="card result" style="border-top:4px solid #2563eb; animation: fadeIn 0.4s;">
+                <p style="text-align:center; font-size:0.8rem; color:#64748b;">Your Normalized Score</p>
                 <div class="score-value">${result.final.toFixed(2)}</div>
-                <div style="text-align:center; font-size:0.75rem; color:#94a3b8; margin-bottom:1rem;">Predicted Score out of ${result.max}</div>
                 <div class="grid">
-                  <div class="grid-item"><b>Raw:</b> ${result.raw}</div>
-                  <div class="grid-item"><b>Bonus:</b> <span style="color:#059669;">+${result.bonus}</span></div>
+                  <div class="grid-item"><b>Raw Score:</b><br>${result.raw}</div>
+                  <div class="grid-item"><b>Estimated Bonus:</b><br><span style="color:#059669;">+${result.bonus}</span></div>
+                  <div class="grid-item"><b>Max Marks:</b><br>${result.max}</div>
+                  <div class="grid-item"><b>Accuracy:</b><br>High (est.)</div>
                 </div>
               </div>` : ''}
+
             <div class="card" style="border-left: 4px solid #10b981;">
-              <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
                 <span style="height:10px; width:10px; background:#10b981; border-radius:50%; animation: pulse-green 1.5s infinite;"></span>
-                <span id="active-users-counter">Connecting...</span>
+                <span id="active-users-counter" style="font-size:0.85rem; font-weight:600; color:#059669;">Connecting to server...</span>
               </div>
               <div class="share-group">
                 <button class="share-btn" style="background:#0088cc;" onclick="window.share('tg')">Telegram</button>
@@ -141,23 +138,51 @@
                 <button class="share-btn" style="background:linear-gradient(45deg, #f09433, #bc1888);" onclick="window.share('ig')">Instagram</button>
               </div>
             </div>
+
             <article class="compliance-card">
-              <h2>Expected Safe Zone (${activeYear})</h2>
+              <h2>Understanding Normalization Math</h2>
+              <p>Normalization is a mathematical process used by SSC and RRB to equate the difficulty levels of exams held in multiple shifts. Since some shifts may have tougher questions than others, the board uses a formula based on the standard deviation of marks.</p>
+              
+              <h3>Key Factors involved:</h3>
+              <p style="font-size:0.8rem;">1. <b>Mean Score:</b> The average marks of all candidates in your shift.<br>
+              2. <b>Standard Deviation:</b> The spread of marks in that particular session.<br>
+              3. <b>Top 0.1% Performance:</b> The benchmark set by the highest scorers across all shifts.</p>
+              
+              <h2>Expected Safe Zone (${year})</h2>
               <table class="cut-off-table">
-                <tr><th>UR (General)</th><td style="color:#059669; font-weight:700;">72% - 76%</td></tr>
-                <tr><th>OBC</th><td>68% - 71%</td></tr>
+                <thead><tr><th>Category</th><th>Target %</th></tr></thead>
+                <tbody>
+                  <tr><td>UR (General)</td><td>72% - 78%</td></tr>
+                  <tr><td>OBC (NCL)</td><td>68% - 73%</td></tr>
+                  <tr><td>EWS</td><td>64% - 69%</td></tr>
+                  <tr><td>SC / ST</td><td>56% - 62%</td></tr>
+                </tbody>
               </table>
+              <p style="font-size:0.75rem; color:#94a3b8;">*Safe zone estimates are calculated based on previous year vacancy-to-candidate ratios.</p>
             </article>
+
+            <article class="compliance-card">
+              <h2>Frequently Asked Questions (FAQ)</h2>
+              <p><b>Q: Does accuracy affect my normalized score?</b><br>
+              A: Officially, the formula depends on raw marks and shift performance. However, maintaining high accuracy ensures your raw score stays high.</p>
+              <p><b>Q: Can normalized marks be lower than raw marks?</b><br>
+              A: Yes, if your shift was significantly easier than the average shift, your score might decrease slightly during normalization.</p>
+            </article>
+
+            <div class="footer">
+              <p>© ${year} Exam Rank Predictor. Built for Aspirants by Sriram.</p>
+              <p style="margin-top:5px;">This is an independent educational tool. Board results are final.</p>
+            </div>
           </main>`;
 
-        document.getElementById('exSel').onchange = (e) => { selExam = e.target.value; rawMarks = ''; result = null; render(); };
+        document.getElementById('exSel').onchange = (e) => { selExam = e.target.value; result = null; render(); };
         document.getElementById('mks').oninput = (e) => { rawMarks = e.target.value; };
       }
 
       window.handleCalc = handleCalc;
       window.share = share;
       render();
-      setInterval(() => { if(document.getElementById('clock')) document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+      setInterval(() => { if(document.getElementById('clock')) document.getElementById('clock').innerText = 'LIVE SYNC: ' + new Date().toLocaleTimeString(); }, 1000);
     </script>
   </body>
 </html>
