@@ -308,11 +308,11 @@
       });
     }
 
-    async function ensureDocx() { if (!window.docx) await ensureScript('https://unpkg.com/docx@8.2.0/build/index.umd.js'); }
-    async function ensureXlsx() { if (!window.XLSX) await ensureScript('https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js'); }
-    async function ensurePptx() { if (!window.PptxGenJS) await ensureScript('https://unpkg.com/pptxgenjs@3.12.0/dist/pptxgen.bundle.js'); }
-    async function ensureMammoth() { if (!window.mammoth) await ensureScript('https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js'); }
-    async function ensureHtml2canvas() { if (!window.html2canvas) await ensureScript('https://html2canvas.hertzen.com/dist/html2canvas.min.js'); }
+    async function ensureDocx() { if (window.docx) return; try { await loadScript('https://cdn.jsdelivr.net/npm/docx@8.2.0/build/index.umd.js'); } catch(e) { try { await loadScript('https://unpkg.com/docx@8.2.0/build/index.umd.js'); } catch(e2) { throw new Error('Word library failed to load. Please check your internet connection or try again later.'); } } }
+    async function ensureXlsx() { if (window.XLSX) return; try { await loadScript('https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js'); } catch(e) { try { await loadScript('https://unpkg.com/xlsx@0.20.1/dist/xlsx.full.min.js'); } catch(e2) { throw new Error('Excel library failed to load. Please check your internet connection.'); } } }
+    async function ensurePptx() { if (window.PptxGenJS) return; try { await loadScript('https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js'); } catch(e) { try { await loadScript('https://unpkg.com/pptxgenjs@3.12.0/dist/pptxgen.bundle.js'); } catch(e2) { throw new Error('PowerPoint library failed to load. Please check your internet connection.'); } } }
+    async function ensureMammoth() { if (window.mammoth) return; try { await loadScript('https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js'); } catch(e) { try { await loadScript('https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js'); } catch(e2) { throw new Error('Word‑to‑PDF library failed to load. Please check your internet connection.'); } } }
+    async function ensureHtml2canvas() { if (window.html2canvas) return; try { await loadScript('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'); } catch(e) { try { await loadScript('https://html2canvas.hertzen.com/dist/html2canvas.min.js'); } catch(e2) { throw new Error('HTML‑to‑PDF library failed to load. Please check your internet connection.'); } } }
 
     const pdfToDocx = async (files, opts, prog) => {
       await ensureDocx();
