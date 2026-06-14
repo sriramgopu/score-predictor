@@ -95,9 +95,6 @@
     })();
   </script>
 
-  <!-- Load Transformers.js (global, needed by AI chat for embeddings) -->
-  <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.0/dist/transformers.min.js"></script>
-
   <style>
     body { margin:0; font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif; background:#070B14; color:#E8EEF7; }
     @keyframes spin{ to{ transform:rotate(360deg); } }
@@ -286,28 +283,29 @@
         page.cleanup();
         if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
       }
-      return text.trim().slice(0, 12000);
+      return text.trim();
     };
 
-    function detectColumns(items) {
-      const xVals = items.map(it => it.transform[4]);
-      if (xVals.length < 5) return [items];
-      xVals.sort((a,b)=>a-b);
-      const gaps = [];
-      let prev = xVals[0];
-      for (let i=1; i<xVals.length; i++) {
-        if (xVals[i] - prev > 30) gaps.push({ start: prev, end: xVals[i] });
-        prev = xVals[i];
-      }
-      if (gaps.length === 0) return [items];
-      gaps.sort((a,b)=>(b.end-b.start)-(a.end-a.start));
-      const columnThreshold = gaps[0].start + (gaps[0].end - gaps[0].start)/2;
-      const left = [], right = [];
+    function clusterTextItems(items, yThreshold = 5, xGapThreshold = 20) {
+      if (!items.length) return [];
+      const linesMap = {};
       items.forEach(item => {
-        if (item.transform[4] < columnThreshold) left.push(item);
-        else right.push(item);
+        const y = Math.round(item.transform[5] / yThreshold) * yThreshold;
+        if (!linesMap[y]) linesMap[y] = [];
+        linesMap[y].push(item);
       });
-      return [left, right];
+      const sortedYs = Object.keys(linesMap).map(Number).sort((a,b) => b - a);
+      return sortedYs.map(y => linesMap[y].sort((a,b) => a.transform[4] - b.transform[4]));
+    }
+
+    function detectTableRows(lines, xGapThreshold = 20) {
+      return lines.map(line => {
+        const gaps = [];
+        for (let j = 1; j < line.length; j++) {
+          gaps.push(line[j].transform[4] - line[j-1].transform[4]);
+        }
+        return { items: line, gaps, isTableRow: line.length >= 2 && Math.max(...gaps) > xGapThreshold };
+      });
     }
 
     async function ensureDocx() { if (!window.docx) await ensureScript('https://unpkg.com/docx@8.2.0/build/index.umd.js'); }
@@ -316,7 +314,6 @@
     async function ensureMammoth() { if (!window.mammoth) await ensureScript('https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js'); }
     async function ensureHtml2canvas() { if (!window.html2canvas) await ensureScript('https://html2canvas.hertzen.com/dist/html2canvas.min.js'); }
 
-    // ---- PDF Processors (all fully defined) ----
     const pdfToDocx = async (files, opts, prog) => {
       await ensureDocx();
       const pdfjs = window.pdfjsLib; prog(10);
@@ -343,54 +340,33 @@
         }
         const items = content.items;
         if (items.length) {
-          const columns = detectColumns(items);
-          for (const colItems of columns) {
-            const linesMap = {};
-            colItems.forEach(item => {
-              const y = Math.round(item.transform[5] / 2) * 2;
-              if (!linesMap[y]) linesMap[y] = [];
-              linesMap[y].push(item);
-            });
-            const sortedYs = Object.keys(linesMap).map(Number).sort((a,b) => b - a);
-            if (!keepFormatting) {
-              sortedYs.forEach(y => {
-                const lineItems = linesMap[y].sort((a,b) => a.transform[4] - b.transform[4]);
-                const lineText = lineItems.map(it => it.str).join(' ').trim();
-                if (lineText) docChildren.push(new Paragraph({ children: [new TextRun({ text: lineText })] }));
+          const lines = clusterTextItems(items);
+          const rows = detectTableRows(lines);
+          for (let r = 0; r < rows.length; r++) {
+            const row = rows[r];
+            if (keepFormatting && row.isTableRow) {
+              const lastChild = docChildren[docChildren.length-1];
+              const tableRow = new TableRow({
+                children: row.items.map(item => new TableCell({
+                  children: [new Paragraph({ children: [new TextRun({ text: item.str.trim() })] })],
+                  width: { size: 1500, type: WidthType.DXA }
+                }))
               });
+              if (lastChild instanceof Table) {
+                lastChild.root.push(tableRow);
+              } else {
+                docChildren.push(new Table({ rows: [tableRow] }));
+              }
             } else {
-              for (const y of sortedYs) {
-                const lineItems = linesMap[y].sort((a,b) => a.transform[4] - b.transform[4]);
-                const xGaps = [];
-                for (let j = 1; j < lineItems.length; j++) {
-                  xGaps.push(lineItems[j].transform[4] - lineItems[j-1].transform[4]);
-                }
-                const isTableRow = lineItems.length >= 2 && Math.max(...xGaps) > 20;
-                if (isTableRow) {
-                  const lastChild = docChildren[docChildren.length-1];
-                  const row = new TableRow({
-                    children: lineItems.map(item => new TableCell({
-                      children: [new Paragraph({ children: [new TextRun({ text: item.str.trim() })] })],
-                      width: { size: 1500, type: WidthType.DXA }
-                    }))
-                  });
-                  if (lastChild instanceof Table) {
-                    lastChild.root.push(row);
-                  } else {
-                    docChildren.push(new Table({ rows: [row] }));
-                  }
+              const text = row.items.map(it => it.str).join(' ').trim();
+              if (text) {
+                const isBold = /bold/i.test(row.items[0].fontName);
+                const isItalic = /italic|oblique/i.test(row.items[0].fontName);
+                const isHeading = /^(Chapter|Section|\d+\.)\s/i.test(text) || (text.length < 60 && /^[A-Z\s]{4,}$/.test(text));
+                if (isHeading) {
+                  docChildren.push(new Paragraph({ heading: HeadingLevel.HEADING_2, children: [new TextRun({ text, bold: true })] }));
                 } else {
-                  const text = lineItems.map(it => it.str).join(' ').trim();
-                  if (text) {
-                    const isBold = /bold/i.test(lineItems[0].fontName);
-                    const isItalic = /italic|oblique/i.test(lineItems[0].fontName);
-                    const isHeading = /^(Chapter|Section|\d+\.)\s/i.test(text) || (text.length < 60 && /^[A-Z\s]{4,}$/.test(text));
-                    if (isHeading) {
-                      docChildren.push(new Paragraph({ heading: HeadingLevel.HEADING_2, children: [new TextRun({ text, bold: true })] }));
-                    } else {
-                      docChildren.push(new Paragraph({ children: [new TextRun({ text, bold: isBold, italics: isItalic })] }));
-                    }
-                  }
+                  docChildren.push(new Paragraph({ children: [new TextRun({ text, bold: isBold, italics: isItalic })] }));
                 }
               }
             }
@@ -430,14 +406,7 @@
         if (!items.length) continue;
         let dataRows;
         if (smartDetection) {
-          const yTolerance = 5;
-          const rowsMap = {};
-          items.forEach(item => {
-            const y = Math.round(item.transform[5] / yTolerance) * yTolerance;
-            if (!rowsMap[y]) rowsMap[y] = [];
-            rowsMap[y].push(item);
-          });
-          const sortedYs = Object.keys(rowsMap).map(Number).sort((a,b) => b-a);
+          const lines = clusterTextItems(items);
           const allX = items.map(it => it.transform[4]).sort((a,b)=>a-b);
           const xGap = 10;
           const columnEdges = [];
@@ -447,15 +416,14 @@
             if (allX[j] - prevX > xGap) columnEdges.push(allX[j]);
             prevX = allX[j];
           }
-          dataRows = sortedYs.map(y => {
-            const rowItems = rowsMap[y];
+          dataRows = lines.map(line => {
             const row = new Array(columnEdges.length).fill('');
-            rowItems.forEach(item => {
-              let colIndex = columnEdges.length-1;
+            line.forEach(item => {
+              let col = columnEdges.length-1;
               for (let c = columnEdges.length-1; c >= 0; c--) {
-                if (item.transform[4] >= columnEdges[c]) { colIndex = c; break; }
+                if (item.transform[4] >= columnEdges[c]) { col = c; break; }
               }
-              row[colIndex] = (row[colIndex] ? row[colIndex] + ' ' + item.str : item.str);
+              row[col] = (row[col] ? row[col] + ' ' + item.str : item.str);
             });
             return row.map(cell => cell.trim());
           });
@@ -745,19 +713,6 @@
           const n = pdf.numPages;
           const quality = (parseInt(opts.quality) || 50) / 100;
           const newDoc = await PDFDocument.create();
-          let estimatedSize = 0;
-          for (let i = 1; i <= Math.min(n, 5); i++) {
-            const page = await pdf.getPage(i);
-            const vp = page.getViewport({ scale: 1.5 });
-            const canvas = document.createElement('canvas');
-            canvas.width = vp.width; canvas.height = vp.height;
-            await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
-            const jpeg = canvas.toDataURL('image/jpeg', quality);
-            estimatedSize += jpeg.length * 0.7;
-            disposeCanvas(canvas);
-          }
-          const estTotal = (estimatedSize / Math.min(n, 5)) * n;
-          prog(20);
           for (let i = 1; i <= n; i++) {
             prog(20 + Math.floor((i / n) * 70));
             const page = await pdf.getPage(i);
@@ -772,15 +727,12 @@
             const pg = newDoc.addPage([vp.width, vp.height]);
             pg.drawImage(img, { x: 0, y: 0, width: vp.width, height: vp.height });
             disposeCanvas(canvas);
-            page.cleanup();
-            if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
           }
-          prog(95);
           const compressedBytes = await newDoc.save();
           prog(100);
           return [{ blob: new Blob([compressedBytes], { type: "application/pdf" }), name: "compressed.pdf",
             sizeReduction: `${Math.round((1 - compressedBytes.byteLength / originalSize) * 100)}% smaller`,
-            estimatedSize: fmtSize(estTotal) + ' (estimated)' }];
+            warning: "Strong compression converts pages to images – text will not be selectable." }];
         }
       },
       rotate: async (files, opts, prog) => {
@@ -1158,7 +1110,6 @@
       },
     };
 
-    // ---- AI Fallbacks & Dictionary ----
     const extractiveSummary = (text, numSentences = 3) => {
       const sentences = text.match(/[^.!?\n]+[.!?\n]*/g) || [text];
       if (sentences.length <= numSentences) return sentences.join(' ').trim();
@@ -1282,7 +1233,6 @@
       return m[name] || 'en';
     };
 
-    // AI Processors – using the worker for inference
     const workerInference = (messages, max_tokens = 400) => {
       return new Promise((resolve, reject) => {
         const worker = window.aiEngineWorker;
@@ -1308,30 +1258,27 @@
       const txt = await extractText(files[0], (p) => setProg(5 + Math.floor(p * 0.3)));
       if (!txt) throw new Error("No text found in this PDF.");
       setProg(35);
+      const words = txt.split(/\s+/);
+      const chunkSize = 300, overlap = 50;
       const chunks = [];
-      const sentences = txt.match(/[^.!?\n]+[.!?\n]*/g) || [txt];
-      let currentChunk = '';
-      for (const s of sentences) {
-        if ((currentChunk + s).length > 500 && currentChunk.length > 0) {
-          chunks.push(currentChunk.trim());
-          currentChunk = s;
-        } else currentChunk += ' ' + s;
+      for (let i = 0; i < words.length; i += chunkSize - overlap) {
+        chunks.push(words.slice(i, i + chunkSize).join(' '));
       }
-      if (currentChunk.trim()) chunks.push(currentChunk.trim());
       setProg(40);
 
       if (window.aiEngineWorker) {
         try {
+          if (!window.Transformers) await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.0/dist/transformers.min.js');
           const pipe = await window.Transformers.pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
-          const chunkEmbeddings = await Promise.all(chunks.map(c => pipe(c, { pooling: 'mean', normalize: true })));
           const questionEmbedding = await pipe(question, { pooling: 'mean', normalize: true });
+          const chunkEmbeddings = await Promise.all(chunks.map(c => pipe(c, { pooling: 'mean', normalize: true })));
           const similarities = chunkEmbeddings.map((emb, i) => ({
             idx: i,
             sim: emb.data.reduce((sum, val, j) => sum + val * questionEmbedding.data[j], 0)
           }));
           similarities.sort((a,b) => b.sim - a.sim);
           const topChunks = similarities.slice(0, 3).map(s => chunks[s.idx]);
-          const prompt = `You are a helpful assistant. Answer the following question using ONLY the provided document excerpts. If the answer is not in the text, say so.\n\nDocument excerpts:\n${topChunks.join('\n---\n')}\n\nQuestion: ${question}\nAnswer:`;
+          const prompt = `Answer using only the excerpts below:\n${topChunks.join('\n---\n')}\nQuestion: ${question}\nAnswer:`;
           const reply = await workerInference([
             { role: 'system', content: 'You answer questions based on provided document snippets.' },
             { role: 'user', content: prompt }
@@ -1340,7 +1287,6 @@
           return [{ type: "text", content: reply, name: "answer.txt" }];
         } catch(e) { console.warn('Neural chat failed, falling back', e); }
       }
-
       const keywords = question.toLowerCase().split(/\W+/).filter(w => w.length > 2);
       const scored = chunks.map(chunk => ({ chunk, score: keywords.reduce((acc, kw) => acc + (chunk.toLowerCase().includes(kw) ? 1 : 0), 0) }));
       scored.sort((a,b) => b.score - a.score);
@@ -1356,7 +1302,7 @@
         setProg(55);
         if (window.aiEngineWorker) {
           try {
-            const reply = await workerInference([{ role: 'user', content: `Summarize the following document concisely (${opts.len}):\n\n${txt.slice(0, 12000)}` }], 300);
+            const reply = await workerInference([{ role: 'user', content: `Summarize the following document concisely (${opts.len}):\n\n${txt.slice(0, 16000)}` }], 500);
             setProg(100);
             return [{ type: "text", content: reply, name: "summary.txt" }];
           } catch(e){}
@@ -1364,7 +1310,7 @@
         const len = opts.len === 'Brief' ? 2 : (opts.len === 'Detailed' ? 5 : 3);
         const summary = extractiveSummary(txt, len);
         setProg(100);
-        return [{ type: "text", content: summary, name: "summary.txt", warning: "AI offline – extractive summary." }];
+        return [{ type: "text", content: summary, name: "summary.txt", warning: "Using extractive summary (AI offline)." }];
       },
       "ai-trans": async (files, opts, setProg) => {
         setProg(5);
@@ -1372,7 +1318,7 @@
         setProg(55);
         if (window.aiEngineWorker) {
           try {
-            const reply = await workerInference([{ role: 'user', content: `Translate the following text from ${opts.from} to ${opts.to}:\n\n${txt.slice(0, 10000)}` }], 800);
+            const reply = await workerInference([{ role: 'user', content: `Translate the following text from ${opts.from} to ${opts.to}:\n\n${txt.slice(0, 12000)}` }], 800);
             setProg(100);
             return [{ type: "text", content: reply, name: "translated.txt" }];
           } catch(e){}
@@ -1389,7 +1335,7 @@
         setProg(55);
         if (window.aiEngineWorker) {
           try {
-            const reply = await workerInference([{ role: 'user', content: `Analyze this document. Provide key topics, sentiment, and important entities.\n\n${txt.slice(0, 10000)}` }], 400);
+            const reply = await workerInference([{ role: 'user', content: `Analyze this document. Provide key topics, sentiment, and important entities.\n\n${txt.slice(0, 12000)}` }], 400);
             setProg(100);
             return [{ type: "text", content: reply, name: "insights.txt" }];
           } catch(e){}
@@ -1401,7 +1347,7 @@
       "ai-chat": chatWithPdf,
     };
 
-    // ---- UI Components ----
+    // ---- UI Components (unchanged, fully included) ----
     const ReorderModal = ({ file, onSave, onCancel }) => {
       const [pages, setPages] = useState([]);
       const [loading, setLoading] = useState(true);
