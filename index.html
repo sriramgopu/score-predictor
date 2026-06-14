@@ -1,395 +1,1866 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SSC & RRB Universal Exam Score Predictor - Live Real-Time Analytics</title>
-    <meta name="description" content="Check predicted normalized scores and safe zone metrics for all SSC and RRB exams including CGL, CHSL, MTS, CPO, JE, GD, NTPC, ALP, and Technicians.">
-    <meta name="keywords" content="SSC Score Predictor, RRB Normalization Calculator, SSC CGL Predicted Score, RRB NTPC Rank Predictor, CHSL, MTS, GD, ALP, Railway Exam Score Calculator">
-    <meta name="author" content="Sriram">
-    <style>
-      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-      body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; background: linear-gradient(135deg, #f8fafc, #eff6ff, #f1f5f9); color: #0f172a; overflow-y: auto; }
-      @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-      @keyframes spin { to { transform: rotate(360deg); } }
-      .header { background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 10; }
-      .header-inner { max-width: 32rem; margin: 0 auto; padding: 1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
-      .header-icon { background: #2563eb; padding: 0.5rem; border-radius: 0.75rem; box-shadow: 0 4px 14px rgba(37,99,235,0.2); display: flex; align-items: center; justify-content: center; }
-      .header h1 { font-size: 1.125rem; font-weight: 700; line-height: 1.3; }
-      .main { max-width: 32rem; margin: 0 auto; padding: 1.5rem 1rem; display: flex; flex-direction: column; gap: 1.25rem; padding-bottom: 5rem; }
-      .card { background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; }
-      .info-card { padding: 1rem; display: flex; align-items: flex-start; gap: 0.75rem; }
-      .info-card svg { width: 1rem; height: 1rem; color: #3b82f6; flex-shrink: 0; margin-top: 0.125rem; }
-      .info-card p { font-size: 0.75rem; color: #64748b; line-height: 1.6; }
-      label { display: block; font-size: 0.875rem; font-weight: 600; color: #334155; margin-bottom: 0.5rem; }
-      .input-wrapper { position: relative; }
-      input, select { width: 100%; padding: 0.75rem 1rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; font-size: 1rem; color: #0f172a; outline: none; transition: all 0.2s; }
-      input:focus, select:focus { border-color: transparent; box-shadow: 0 0 0 2px #3b82f6; }
-      input::placeholder { color: #94a3b8; }
-      .input-suffix { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); font-size: 0.75rem; color: #94a3b8; font-weight: 500; }
-      .field-group { margin-bottom: 1.25rem; }
-      .error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; font-size: 0.875rem; border-radius: 0.75rem; padding: 0.75rem 1rem; margin-top: 1.25rem; }
-      .btn { width: 100%; background: #2563eb; color: white; font-weight: 600; padding: 0.875rem; border-radius: 0.75rem; border: none; font-size: 1rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 4px 14px rgba(37,99,235,0.2); }
-      .btn:hover { background: #1d4ed8; }
-      .score-value { font-size: 3.5rem; font-weight: 800; text-align: center; color: #2563eb; letter-spacing: -0.02em; }
-      .score-outof { font-size: 0.75rem; color: #94a3b8; text-align: center; margin-top: 0.25rem; }
-      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1rem; }
-      .grid-item { background: #f8fafc; border-radius: 0.75rem; padding: 0.75rem; }
-      .grid-item .label { font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.125rem; }
-      .grid-item .value { font-size: 1.125rem; font-weight: 700; }
-      .text-emerald { color: #059669; }
-      .text-blue { color: #2563eb; }
-      .compliance-card { background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; }
-      .compliance-card h2 { font-size: 1.125rem; font-weight: 700; color: #1e293b; margin-bottom: 0.75rem; }
-      .compliance-card p { font-size: 0.815rem; color: #64748b; line-height: 1.6; margin-bottom: 0.75rem; }
-      .compliance-card ul { margin-left: 1.25rem; margin-bottom: 1rem; font-size: 0.815rem; color: #64748b; }
-      .compliance-card li { margin-bottom: 0.375rem; line-height: 1.6; }
-      .cut-off-table { width: 100%; border-collapse: collapse; margin-top: 0.75rem; font-size: 0.815rem; background: #fff; }
-      .cut-off-table th { background: #f8fafc; text-align: left; padding: 10px; border: 1px solid #e2e8f0; color: #475569; font-weight: 600; }
-      .cut-off-table td { padding: 10px; border: 1px solid #e2e8f0; color: #1e293b; }
-      .safe-zone-highlight { color: #059669; font-weight: 700; }
-      .share-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-      .share-btn { border: none; padding: 8px 14px; border-radius: 20px; font-size: 0.725rem; font-weight: 600; cursor: pointer; color: white; display: flex; align-items: center; gap: 5px; transition: opacity 0.2s; }
-      @keyframes pulse-green { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
-      .live-timestamp { font-size: 0.7rem; background: #f1f5f9; padding: 4px 8px; border-radius: 6px; color: #64748b; font-family: monospace; font-weight: 600; }
-      .legal-box { background: #f8fafc; border-left: 4px solid #2563eb; padding: 1rem; border-radius: 0.5rem; margin-top: 1.25rem; font-size: 0.75rem; color: #64748b; line-height: 1.5; }
-    </style>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SGN PDF House – Free Private PDF Suite</title>
+  <meta name="description" content="40+ PDF tools, completely private, no uploads. Convert, merge, split, compress, OCR, AI chat with your PDF, and more.">
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- FIREBASE REAL-TIME PRESENCE -->
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-      import { getDatabase, ref, onValue, set, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  <!-- Embedded Lucide Icons -->
+  <script>
+    const L={};window.LucideReact=L;
+    const S=(p)=>React.createElement('svg',{xmlns:"http://www.w3.org/2000/svg",viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:2,strokeLinecap:"round",strokeLinejoin:"round",width:p?.size||24,height:p?.size||24,...p});
+    L.FileText=p=>S({...p,children:[React.createElement('path',{d:"M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"}),React.createElement('polyline',{points:"14 2 14 8 20 8"}),React.createElement('line',{x1:16,y1:13,x2:8,y2:13}),React.createElement('line',{x1:16,y1:17,x2:8,y2:17}),React.createElement('line',{x1:10,y1:9,x2:8,y2:9})]});
+    L.Upload=p=>S({...p,children:[React.createElement('path',{d:"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"}),React.createElement('polyline',{points:"17 8 12 3 7 8"}),React.createElement('line',{x1:12,y1:3,x2:12,y2:15})]});
+    L.Download=p=>S({...p,children:[React.createElement('path',{d:"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"}),React.createElement('polyline',{points:"7 10 12 15 17 10"}),React.createElement('line',{x1:12,y1:15,x2:12,y2:3})]});
+    L.Scissors=p=>S({...p,children:[React.createElement('circle',{cx:6,cy:6,r:3}),React.createElement('path',{d:"M8.12 8.12 12 12"}),React.createElement('path',{d:"M20 4 8.12 15.88"}),React.createElement('circle',{cx:6,cy:18,r:3}),React.createElement('path',{d:"M14.8 14.8 20 20"})]});
+    L.Archive=p=>S({...p,children:[React.createElement('rect',{x:2,y:4,width:20,height:5,rx:2}),React.createElement('path',{d:"M4 9v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"}),React.createElement('path',{d:"M10 13h4"})]});
+    L.RotateCw=p=>S({...p,children:[React.createElement('polyline',{points:"23 4 23 10 17 10"}),React.createElement('path',{d:"M20.49 15a9 9 0 1 1-2.12-9.36L23 10"})]});
+    L.Trash2=p=>S({...p,children:[React.createElement('path',{d:"M3 6h18"}),React.createElement('path',{d:"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"}),React.createElement('path',{d:"M19 8v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8"}),React.createElement('line',{x1:10,y1:11,x2:10,y2:17}),React.createElement('line',{x1:14,y1:11,x2:14,y2:17})]});
+    L.Shield=p=>S({...p,children:[React.createElement('path',{d:"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"})]});
+    L.Lock=p=>S({...p,children:[React.createElement('rect',{x:3,y:11,width:18,height:11,rx:2,ry:2}),React.createElement('path',{d:"M7 11V7a5 5 0 0 1 10 0v4"})]});
+    L.Unlock=p=>S({...p,children:[React.createElement('rect',{x:3,y:11,width:18,height:11,rx:2,ry:2}),React.createElement('path',{d:"M7 11V7a5 5 0 0 1 9.9-1"})]});
+    L.Edit=p=>S({...p,children:[React.createElement('path',{d:"M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"}),React.createElement('path',{d:"M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"})]});
+    L.MessageSquare=p=>S({...p,children:[React.createElement('path',{d:"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"})]});
+    L.Globe=p=>S({...p,children:[React.createElement('circle',{cx:12,cy:12,r:10}),React.createElement('line',{x1:2,y1:12,x2:22,y2:12}),React.createElement('path',{d:"M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"})]});
+    L.Search=p=>S({...p,children:[React.createElement('circle',{cx:11,cy:11,r:8}),React.createElement('path',{d:"m21 21-4.35-4.35"})]});
+    L.X=p=>S({...p,children:[React.createElement('path',{d:"M18 6 6 18"}),React.createElement('path',{d:"m6 6 12 12"})]});
+    L.Check=p=>S({...p,children:[React.createElement('polyline',{points:"20 6 9 17 4 12"})]});
+    L.AlertCircle=p=>S({...p,children:[React.createElement('circle',{cx:12,cy:12,r:10}),React.createElement('line',{x1:12,y1:8,x2:12,y2:12}),React.createElement('line',{x1:12,y1:16,x2:12.01,y2:16})]});
+    L.Loader2=p=>S({...p,children:[React.createElement('path',{d:"M21 12a9 9 0 1 1-6.219-8.56"})]});
+    L.Zap=p=>S({...p,children:[React.createElement('polygon',{points:"13 2 3 14 12 14 11 22 21 10 12 10 13 2"})]});
+    L.Star=p=>S({...p,children:[React.createElement('polygon',{points:"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"})]});
+    L.ArrowRight=p=>S({...p,children:[React.createElement('path',{d:"M5 12h14"}),React.createElement('path',{d:"m12 5 7 7-7 7"})]});
+    L.Hash=p=>S({...p,children:[React.createElement('line',{x1:4,y1:9,x2:20,y2:9}),React.createElement('line',{x1:4,y1:15,x2:20,y2:15}),React.createElement('line',{x1:10,y1:3,x2:8,y2:21}),React.createElement('line',{x1:16,y1:3,x2:14,y2:21})]});
+    L.Eye=p=>S({...p,children:[React.createElement('path',{d:"M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"}),React.createElement('circle',{cx:12,cy:12,r:3})]});
+    L.Send=p=>S({...p,children:[React.createElement('path',{d:"m22 2-7 20-4-9-9-4Z"}),React.createElement('path',{d:"M22 2 11 13"})]});
+    L.RefreshCw=p=>S({...p,children:[React.createElement('polyline',{points:"23 4 23 10 17 10"}),React.createElement('polyline',{points:"1 20 1 14 7 14"}),React.createElement('path',{d:"M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"})]});
+    L.Plus=p=>S({...p,children:[React.createElement('path',{d:"M5 12h14"}),React.createElement('path',{d:"M12 5v14"})]});
+    L.ChevronRight=p=>S({...p,children:[React.createElement('path',{d:"m9 18 6-6-6-6"})]});
+    L.ChevronLeft=p=>S({...p,children:[React.createElement('path',{d:"m15 18-6-6 6-6"})]});
+    L.Wand2=p=>S({...p,children:[React.createElement('path',{d:"m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"}),React.createElement('path',{d:"m14 7 3 3"}),React.createElement('path',{d:"M5 6v4"}),React.createElement('path',{d:"M19 14v4"}),React.createElement('path',{d:"M10 2v2"}),React.createElement('path',{d:"M7 8H3"}),React.createElement('path',{d:"M21 16h-4"}),React.createElement('path',{d:"M11 3H9"})]});
+    L.Sparkles=p=>S({...p,children:[React.createElement('path',{d:"m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"})]});
+    L.Layers=p=>S({...p,children:[React.createElement('path',{d:"M12 2 2 7l10 5 10-5-10-5z"}),React.createElement('path',{d:"m2 17 10 5 10-5"}),React.createElement('path',{d:"m2 12 10 5 10-5"})]});
+    L.Copy=p=>S({...p,children:[React.createElement('rect',{x:9,y:9,width:13,height:13,rx:2,ry:2}),React.createElement('path',{d:"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"})]});
+    L.GitMerge=p=>S({...p,children:[React.createElement('circle',{cx:18,cy:18,r:3}),React.createElement('circle',{cx:6,cy:6,r:3}),React.createElement('path',{d:"M6 9v12"}),React.createElement('path',{d:"M15 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"}),React.createElement('path',{d:"M6 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"}),React.createElement('path',{d:"M15 6v6a3 3 0 0 1-3 3H7"})]});
+    L.Image=p=>S({...p,children:[React.createElement('rect',{x:3,y:3,width:18,height:18,rx:2,ry:2}),React.createElement('circle',{cx:9,cy:9,r:2}),React.createElement('path',{d:"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"})]});
+    L.Bot=p=>S({...p,children:[React.createElement('rect',{x:2,y:2,width:20,height:16,rx:2}),React.createElement('path',{d:"M6 12h.01"}),React.createElement('path',{d:"M12 12h.01"}),React.createElement('path',{d:"M18 12h.01"}),React.createElement('path',{d:"M12 2v4"})]});
+    L.Table=p=>S({...p,children:[React.createElement('rect',{x:3,y:3,width:18,height:18,rx:2,ry:2}),React.createElement('path',{d:"M3 9h18"}),React.createElement('path',{d:"M3 15h18"}),React.createElement('path',{d:"M9 3v18"})]});
+    L.Settings=p=>S({...p,children:[React.createElement('path',{d:"M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"}),React.createElement('circle',{cx:12,cy:12,r:3})]});
+    L.Menu=p=>S({...p,children:[React.createElement('line',{x1:4,y1:12,x2:20,y2:12}),React.createElement('line',{x1:4,y1:6,x2:20,y2:6}),React.createElement('line',{x1:4,y1:18,x2:20,y2:18})]});
+    L.ChevronDown=p=>S({...p,children:[React.createElement('path',{d:"m6 9 6 6 6-6"})]});
+    L.FileSearch=p=>S({...p,children:[React.createElement('path',{d:"M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"}),React.createElement('polyline',{points:"14 2 14 8 20 8"}),React.createElement('path',{d:"M10.5 14a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"}),React.createElement('path',{d:"M14 15.5 17.5 19"})]});
+    L.Cpu=p=>S({...p,children:[React.createElement('rect',{x:4,y:4,width:16,height:16,rx:2}),React.createElement('rect',{x:9,y:9,width:6,height:6}),React.createElement('path',{d:"M15 2v2"}),React.createElement('path',{d:"M15 20v2"}),React.createElement('path',{d:"M2 15h2"}),React.createElement('path',{d:"M2 9h2"}),React.createElement('path',{d:"M20 15h2"}),React.createElement('path',{d:"M20 9h2"}),React.createElement('path',{d:"M9 2v2"}),React.createElement('path',{d:"M9 20v2"})]});
+    L.Brain=p=>S({...p,children:[React.createElement('path',{d:"M9.5 2A2.5 2.5 0 0 1 12 4.5V12a2.5 2.5 0 0 1-5 0V5a3 3 0 0 1 3-3Z"}),React.createElement('path',{d:"M14.5 2A2.5 2.5 0 0 0 12 4.5V12a2.5 2.5 0 0 0 5 0V5a3 3 0 0 0-3-3Z"}),React.createElement('path',{d:"M12 20v-8"}),React.createElement('path',{d:"M6 13h12"}),React.createElement('path',{d:"M6 17h12"})]});
+    L.Home=p=>S({...p,children:[React.createElement('path',{d:"m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"}),React.createElement('polyline',{points:"9 22 9 12 15 12 15 22"})]});
+    L.FilePlus=p=>S({...p,children:[React.createElement('path',{d:"M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"}),React.createElement('polyline',{points:"14 2 14 8 20 8"}),React.createElement('line',{x1:12,y1:18,x2:12,y2:12}),React.createElement('line',{x1:9,y1:15,x2:15,y2:15})]});
+    L.FileCheck=p=>S({...p,children:[React.createElement('path',{d:"M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"}),React.createElement('polyline',{points:"14 2 14 8 20 8"}),React.createElement('polyline',{points:"9 15 11 17 15 13"})]});
+    L.Type=p=>S({...p,children:[React.createElement('polyline',{points:"4 7 4 4 20 4 20 7"}),React.createElement('line',{x1:9,y1:20,x2:15,y2:20}),React.createElement('line',{x1:12,y1:4,x2:12,y2:20})]});
+    L.Languages=p=>S({...p,children:[React.createElement('circle',{cx:12,cy:12,r:10}),React.createElement('line',{x1:2,y1:12,x2:22,y2:12}),React.createElement('path',{d:"M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"})]});
+    L.Key=p=>S({...p,children:[React.createElement('path',{d:"m21 2-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4"})]});
+    L.BookOpen=p=>S({...p,children:[React.createElement('path',{d:"M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"}),React.createElement('path',{d:"M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"})]});
+  </script>
 
-      const firebaseConfig = {
-        apiKey: "AIzaSyBl3G-JdQ-CegkNOaBGzB1vXbryG4iXadU",
-        authDomain: "score-predictor-live.firebaseapp.com",
-        databaseURL: "https://score-predictor-live-default-rtdb.firebaseio.com",
-        projectId: "score-predictor-live",
-        storageBucket: "score-predictor-live.firebasestorage.app",
-        messagingSenderId: "318725670070",
-        appId: "1:318725670070:web:6ca18ecfab8030182fd217"
-      };
-
-      const app = initializeApp(firebaseConfig);
-      const db = getDatabase(app);
-      const userCountRef = ref(db, 'status/onlineCount');
-
-      onValue(userCountRef, (snapshot) => {
-          const count = snapshot.val() || 0;
-          const counterEl = document.getElementById('active-users-counter');
-          if (counterEl) el => el.innerText = `${count + 142} aspirants calculating live`;
-          if (counterEl) counterEl.innerText = `${count + 142} aspirants calculating live`;
+  <!-- Preload core PDF libraries (UMD) -->
+  <script>
+    function loadScript(src, fallbackSrc) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.async = false;
+        script.onload = resolve;
+        script.onerror = () => {
+          if (fallbackSrc) {
+            const fallback = document.createElement('script');
+            fallback.src = fallbackSrc;
+            fallback.async = false;
+            fallback.onload = resolve;
+            fallback.onerror = reject;
+            document.head.appendChild(fallback);
+          } else { reject(new Error('Failed to load ' + src)); }
+        };
+        document.head.appendChild(script);
       });
+    }
+    (async function() {
+      try {
+        await loadScript('https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js','https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js');
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js','https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js');
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js','https://unpkg.com/jszip@3.10.1/dist/jszip.min.js');
+        if(window.pdfjsLib) window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      } catch(e) { console.error(e); }
+    })();
+  </script>
 
-      onValue(userCountRef, (snapshot) => {
-          let currentCount = snapshot.val() || 0;
-          set(userCountRef, currentCount + 1);
-          onDisconnect(userCountRef).set(currentCount > 0 ? currentCount - 1 : 0);
-      }, { onlyOnce: true });
-    </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script>
-      // COMPREHENSIVE SSC & RRB DETAILED EXAM SPECIFICATION DATABASE
-      const EXAMS = [
-        // Staff Selection Commission (SSC) Database Block
-        { id: 'ssc_cgl_t1', name: 'SSC CGL (Tier-1)', maxMarks: 200, board: 'SSC' },
-        { id: 'ssc_cgl_t2', name: 'SSC CGL (Tier-2: Paper-1)', maxMarks: 390, board: 'SSC' },
-        { id: 'ssc_chsl_t1', name: 'SSC CHSL (Tier-1)', maxMarks: 200, board: 'SSC' },
-        { id: 'ssc_chsl_t2', name: 'SSC CHSL (Tier-2)', maxMarks: 180, board: 'SSC' },
-        { id: 'ssc_mts', name: 'SSC MTS (Session 1 + 2)', maxMarks: 270, board: 'SSC' },
-        { id: 'ssc_cpo_t1', name: 'SSC CPO (Tier-1)', maxMarks: 200, board: 'SSC' },
-        { id: 'ssc_cpo_t2', name: 'SSC CPO (Tier-2)', maxMarks: 200, board: 'SSC' },
-        { id: 'ssc_gd', name: 'SSC GD Constable', maxMarks: 160, board: 'SSC' },
-        { id: 'ssc_je_p1', name: 'SSC Junior Engineer (Paper-1)', maxMarks: 200, board: 'SSC' },
-        { id: 'ssc_je_p2', name: 'SSC Junior Engineer (Paper-2)', maxMarks: 300, board: 'SSC' },
-        { id: 'ssc_steno', name: 'SSC Stenographer (Grade C & D)', maxMarks: 200, board: 'SSC' },
-        { id: 'ssc_selection', name: 'SSC Selection Posts', maxMarks: 200, board: 'SSC' },
+  <!-- Load Transformers.js (global, needed by AI chat for embeddings) -->
+  <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.0/dist/transformers.min.js"></script>
 
-        // Railway Recruitment Board (RRB) Database Block
-        { id: 'rrb_ntpc_cbt1', name: 'RRB NTPC (CBT-1 All Posts)', maxMarks: 100, board: 'RRB' },
-        { id: 'rrb_ntpc_cbt2', name: 'RRB NTPC (CBT-2 Level 2/3/5/6)', maxMarks: 120, board: 'RRB' },
-        { id: 'rrb_alp_cbt1', name: 'RRB ALP (CBT-1)', maxMarks: 75, board: 'RRB' },
-        { id: 'rrb_alp_cbt2_a', name: 'RRB ALP (CBT-2 Part-A)', maxMarks: 100, board: 'RRB' },
-        { id: 'rrb_tech_cbt1', name: 'RRB Technicians (Signal Grade-I)', maxMarks: 100, board: 'RRB' },
-        { id: 'rrb_tech_cbt2', name: 'RRB Technicians (Grade-III)', maxMarks: 100, board: 'RRB' },
-        { id: 'rrb_je_cbt1', name: 'RRB Junior Engineer (CBT-1)', maxMarks: 100, board: 'RRB' },
-        { id: 'rrb_je_cbt2', name: 'RRB Junior Engineer (CBT-2)', maxMarks: 150, board: 'RRB' },
-        { id: 'rrb_sse', name: 'RRB Senior Section Engineer', maxMarks: 150, board: 'RRB' },
-        { id: 'rrb_rpf_si', name: 'RPF Sub-Inspector (SI)', maxMarks: 120, board: 'RRB' },
-        { id: 'rrb_rpf_const', name: 'RPF Constable', maxMarks: 120, board: 'RRB' },
-        { id: 'rrb_paramed', name: 'RRB Paramedical Categories', maxMarks: 100, board: 'RRB' },
-        { id: 'rrb_group_d', name: 'RRB Group D (Level-1)', maxMarks: 100, board: 'RRB' }
-      ];
+  <style>
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif; background:#070B14; color:#E8EEF7; }
+    @keyframes spin{ to{ transform:rotate(360deg); } }
+    .spin{ animation:spin 1s linear infinite; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    input,select,button{ font-family:inherit; }
+    ::-webkit-scrollbar{ width:6px; height:6px; }
+    ::-webkit-scrollbar-track{ background:#070B14; }
+    ::-webkit-scrollbar-thumb{ background:#1A2540; border-radius:3px; }
+    ::-webkit-scrollbar-thumb:hover{ background:#2D3F66; }
+    .bg-orbs { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.25; }
+    .orb1 { width: 600px; height: 600px; background: radial-gradient(circle, #7C3AED, transparent 70%); top: -100px; left: -100px; animation: float1 18s ease-in-out infinite; }
+    .orb2 { width: 500px; height: 500px; background: radial-gradient(circle, #3B82F6, transparent 70%); bottom: -80px; right: -80px; animation: float2 15s ease-in-out infinite; }
+    .orb3 { width: 450px; height: 450px; background: radial-gradient(circle, #A855F7, transparent 70%); top: 50%; left: 50%; transform: translate(-50%,-50%); animation: float3 20s ease-in-out infinite; }
+    @keyframes float1 { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(180px,-80px) scale(1.15); } 66% { transform: translate(60px,60px) scale(0.95); } }
+    @keyframes float2 { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(-160px,70px) scale(1.1); } 66% { transform: translate(-40px,-40px) scale(0.9); } }
+    @keyframes float3 { 0%,100% { transform: translate(-50%,-50%) scale(1); } 33% { transform: translate(-30%,-70%) scale(1.2); } 66% { transform: translate(-60%,-30%) scale(0.85); } }
+  </style>
+</head>
+<body>
+  <div class="bg-orbs"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+  <div id="root"></div>
 
-      const CATEGORIES = [
-        { value: 'UR', label: 'UR (Unreserved General)' },
-        { value: 'OBC', label: 'OBC (Non-Creamy Layer)' },
-        { value: 'EWS', label: 'EWS (Economically Weaker Section)' },
-        { value: 'SC', label: 'SC (Scheduled Caste)' },
-        { value: 'ST', label: 'ST (Scheduled Tribe)' },
-      ];
-
-      let selectedExamId = 'ssc_cgl_t1';
-      let rawMarks = '';
-      let category = 'UR';
-      let result = null;
-      let error = '';
-      let isCalculating = false;
-      const currentYear = new Date().getFullYear();
-
-      function getSelectedExam() {
-        return EXAMS.find(e => e.id === selectedExamId) || EXAMS[0];
-      }
-
-      function getScoreColor(score, max) {
-        const percentage = (score / max) * 100;
-        if (percentage >= 76) return 'text-emerald';
-        if (percentage >= 62) return 'text-blue';
-        if (percentage >= 48) return 'text-amber';
-        return 'text-red';
-      }
-
-      function getScoreLabel(score, max) {
-        const percentage = (score / max) * 100;
-        if (percentage >= 76) return 'Excellent Baseline';
-        if (percentage >= 62) return 'Very Safe Zone';
-        if (percentage >= 48) return 'Moderate Chance';
-        return 'Needs Scaling Support';
-      }
-
-      function handleCalculate() {
-        error = '';
-        result = null;
-        render();
-
-        const currentExam = getSelectedExam();
-        const marks = parseFloat(rawMarks);
-        
-        if (isNaN(marks) || rawMarks === '') { error = 'Please input a valid numeric marks field value.'; render(); return; }
-        if (marks < 0 || marks > currentExam.maxMarks) { error = `Input boundary error: Marks must fall between 0 and ${currentExam.maxMarks} for ${currentExam.name}.`; render(); return; }
-
-        isCalculating = true;
-        render();
-
-        setTimeout(() => {
-          // Dynamic scaling logic based upon absolute exam max bounds matrix weights
-          const baseWeightFactor = currentExam.maxMarks / 200;
-          const bonus = Math.round((Math.random() * 9 + 4.5) * baseWeightFactor * 100) / 100;
-          const final = Math.min(Math.round((marks + bonus) * 100) / 100, currentExam.maxMarks);
-          
-          result = { final, bonus, raw: marks, max: currentExam.maxMarks, examName: currentExam.name, board: currentExam.board };
-          isCalculating = false;
-          render();
-          setTimeout(() => {
-            const el = document.getElementById('result');
-            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }, 100);
-        }, 850);
-      }
-
-      function render() {
-        const root = document.getElementById('root');
-        const examOptions = EXAMS.map(e => `<option value="${e.id}" ${selectedExamId === e.id ? 'selected' : ''}>[${e.board}] ${e.name}</option>`).join('');
-        const catOptions = CATEGORIES.map(c => `<option value="${c.value}" ${category === c.value ? 'selected' : ''}>${c.label}</option>`).join('');
-        const activeExam = getSelectedExam();
-
-        let resultHTML = '';
-        if (result) {
-          const colorClass = getScoreColor(result.final, result.max);
-          const label = getScoreLabel(result.final, result.max);
-          const width = Math.min((result.final / result.max) * 100, 100);
-          resultHTML = `
-            <div class="card result" id="result" style="animation: fadeIn 0.4s ease-out; border-top: 4px solid #2563eb;">
-              <div class="result-header">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1.25rem; height:1.25rem; color:#10b981;"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.27 12 20l-3.477-7.73"/><path d="M8 8h8"/></svg>
-                <h2>Predicted Performance Matrix</h2>
-              </div>
-              <div class="score-display">
-                <p class="score-value ${colorClass}">${result.final.toFixed(2)}</p>
-                <p class="score-outof">predicted score out of ${result.max}</p>
-              </div>
-              <div class="progress-label"><span>Comparative Status Scale</span><span class="${colorClass} ${colorClass === 'text-emerald' || colorClass === 'text-blue' ? 'safe-zone-highlight' : ''}" style="font-weight:700;">${label}</span></div>
-              <div class="card" style="height: 0.625rem; background: #f1f5f9; border-radius: 9999px; overflow: hidden; margin-bottom: 1.25rem; padding: 0;"><div class="progress-fill" style="width:${width}%"></div></div>
-              <div class="grid">
-                <div class="grid-item"><p class="label">Raw Score Secured</p><p class="value" style="color:#334155">${result.raw.toFixed(2)}</p></div>
-                <div class="grid-item"><p class="label">Shift Normalization Delta</p><p class="value text-emerald">+${result.bonus.toFixed(2)}</p></div>
-                <div class="grid-item"><p class="label">Stream Pool Stream</p><p class="value" style="color:#334155">${category}</p></div>
-                <div class="grid-item"><p class="label">Estimated Percentile Range</p><p class="value text-blue">${Math.min(((result.final / result.max) * 100), 100).toFixed(1)}%</p></div>
-              </div>
-            </div>`;
-        }
-
-        root.innerHTML = `
-          <div>
-            <header class="header">
-              <div class="header-inner">
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                  <div class="header-icon">
-                    <svg style="width:1.25rem; height:1.25rem; color:white;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="8" x2="16" y1="10" y2="10"/><line x1="8" x2="12" y1="14" y2="14"/></svg>
-                  </div>
-                  <div>
-                    <h1>SSC & RRB Master Predictor ${currentYear}</h1>
-                    <p>All-Exam Live Algorithmic Normalization Engine</p>
-                  </div>
-                </div>
-                <div class="live-timestamp" id="live-clock">Syncing Matrix...</div>
-              </div>
-            </header>
-            <main class="main">
-              <div id="ad-top-wrapper" style="text-align:center; min-height:50px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:0.65rem; color:#94a3b8;">Premium Contextual Placement Ad Hub Container</div>
-
-              <div class="card info-card">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
-                <p>This engine dynamically maps evaluation bounds for all <strong>${EXAMS.length} official SSC and RRB examination streams</strong>. The normalization routine re-calibrates structural coefficient variables to align directly with respective technical blueprint limits.</p>
-              </div>
-              
-              <div class="card">
-                <div class="field-group">
-                  <label for="examSelect">Target Examination Stream</label>
-                  <select id="examSelect">${examOptions}</select>
-                </div>
-                <div class="field-group">
-                  <label for="rawMarks">Raw Marks Metrics (Input Scale: 0 to ${activeExam.maxMarks})</label>
-                  <div class="input-wrapper">
-                    <input id="rawMarks" type="number" min="0" max="${activeExam.maxMarks}" step="0.01" placeholder="Enter raw score metrics (Max: ${activeExam.maxMarks})" value="${rawMarks}" />
-                    <span class="input-suffix">/${activeExam.maxMarks}</span>
-                  </div>
-                </div>
-                <div class="field-group">
-                  <label for="category">Category Stream Allocation</label>
-                  <select id="category">${catOptions}</select>
-                </div>
-                ${error ? `<div class="error">${error}</div>` : ''}
-                <button class="btn" ${isCalculating ? 'disabled' : ''} onclick="window.handleCalculate()">
-                  ${isCalculating ? '<div class="spinner"></div> Aligning Dynamic Shift Variables...' : '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1.25rem; height:1.25rem;"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg> Calculate Dynamic Normalized Score'}
-                </button>
-              </div>
-              
-              ${resultHTML}
-              
-              <div class="card" style="border-left: 4px solid #10b981; padding: 1.25rem; animation: fadeIn 0.5s ease-out;">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                  <span style="height: 9px; width: 9px; background-color: #10b981; border-radius: 50%; display: inline-block; animation: pulse-green 1.5s infinite;"></span>
-                  <span id="active-users-counter" style="font-size: 0.815rem; font-weight: 600; color: #059669;">Loading backend server metrics...</span>
-                </div>
-                
-                <p style="font-size: 0.75rem; color: #64748b; font-weight: 600;">Broadcast dynamic performance benchmarks to multi-exam peer loops:</p>
-                <div class="share-group">
-                  <button class="share-btn" style="background:#0088cc;" onclick="const u=encodeURIComponent(window.location.href); const t=encodeURIComponent('Check your precise predicted scores across all SSC & RRB exam streams inside this live engine!'); window.open('https://t.me/share/url?url='+u+'&text='+t)">Telegram Loops</button>
-                  <button class="share-btn" style="background:#25D366;" onclick="const t=encodeURIComponent('My real-time multi-exam predictive performance analysis is active here: '+window.location.href); window.open('https://wa.me/?text='+t)">WhatsApp Channels</button>
-                  <button class="share-btn" style="background:#1877F2;" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href))">Facebook Feeds</button>
-                  <button class="share-btn" style="background:linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);" onclick="navigator.clipboard.writeText(window.location.href); alert('Universal link copied! You can now drop it safely onto your Instagram Bio, Stories, or exam group feeds!')">Instagram Sticker Link</button>
-                </div>
-              </div>
-
-              <!-- Shift Difficulty Survey Interactive Component -->
-              <div class="card" style="border-top: 4px solid #3b82f6;">
-                <h3 style="font-size: 0.95rem; font-weight:700; color:#1e293b; margin-bottom: 10px;">Shift Variance Level Tracker (Community Submission)</h3>
-                <p style="font-size: 0.75rem; color: #64748b; margin-bottom:12px;">How do you gauge the structural question profile balance of your specific shift session?</p>
-                <div style="display: flex; gap: 10px; justify-content: space-between;">
-                  <button class="share-btn" style="background:#f1f5f9; color:#475569; flex:1; justify-content:center;" onclick="alert('Community submission saved. Current shift profiling index matches: 64.2% Moderate Session Profile weight margins.')">Easy Shift</button>
-                  <button class="share-btn" style="background:#f1f5f9; color:#475569; flex:1; justify-content:center;" onclick="alert('Community submission saved. Current shift profiling index matches: 64.2% Moderate Session Profile weight margins.')">Moderate Shift</button>
-                  <button class="share-btn" style="background:#f1f5f9; color:#475569; flex:1; justify-content:center;" onclick="alert('Community submission saved. Current shift profiling index matches: 64.2% Moderate Session Profile weight margins.')">Hard Shift</button>
-                </div>
-              </div>
-
-              <!-- High-Weightage Revision Core Topics Panel Block -->
-              <div class="card" style="background: #fffbeb; border: 1px solid #fde68a;">
-                <h3 style="font-size: 0.95rem; color: #92400e; font-weight:700; margin-bottom: 8px;">🔥 Core High-Yield Exam Blueprint Segments</h3>
-                <ul style="font-size: 0.8rem; color: #b45309; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 4px 0;">
-                  <li>✅ Quant Metrics (Geometry & Arithmetic)</li>
-                  <li>✅ Indian Constitution (Core Articles)</li>
-                  <li>✅ General Sciences (Physics & Chemistry Bases)</li>
-                  <li>✅ Logical Evaluation (Series & Syllogisms)</li>
-                </ul>
-              </div>
-
-              <div id="ad-mid-wrapper" style="text-align:center; min-height:100px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:0.65rem; color:#94a3b8;">High-eCPM Programmatic Banner Ad Container</div>
-
-              <article class="compliance-card">
-                <h2>Safe Zone Index Thresholds (${currentYear} Metrics)</h2>
-                <p>Algorithmic trend parameters outline the estimated target percentage parameters required to clear cross-session qualifying barriers across tiers/CBT stages safely:</p>
-                
-                <table class="cut-off-table">
-                  <thead>
-                    <tr>
-                      <th>Category Pool Identifier</th>
-                      <th>SSC Consolidated Targets</th>
-                      <th>RRB Consolidated Targets</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr><td>UR (General Unreserved)</td><td class="safe-zone-highlight">72% - 78% of Total Base</td><td class="safe-zone-highlight">68% - 74% of Total Base</td></tr>
-                    <tr><td>OBC (Non-Creamy Layer)</td><td>68% - 73% of Total Base</td><td>64% - 69% of Total Base</td></tr>
-                    <tr><td>EWS (Economically Weaker Segment)</td><td>64% - 69% of Total Base</td><td>60% - 65% of Total Base</td></tr>
-                    <tr><td>SC / ST Categories Pool</td><td>54% - 62% of Total Base</td><td>52% - 58% of Total Base</td></tr>
-                  </tbody>
-                </table>
-
-                <h2 style="margin-top: 1.5rem;">Understanding Core Multi-Shift Normalization Math</h2>
-                <p>When vast public recruitment examinations like <strong>SSC CGL, CHSL, MTS, Junior Engineer, RRB NTPC, ALP, and Technicians</strong> operate across multiple session calendars, variations in paper difficulty parameters are entirely inevitable. To resolve structural inequality, recruitment algorithms convert raw marks performance into an equitable baseline scale system.</p>
-                
-                <h3>How is the Normalization Scale Adjusted?</h3>
-                <p>The standard multi-shift mathematical model checks cumulative standard deviations and mean scores metrics. The runtime tracks specific data variables, including:</p>
-                <ul>
-                  <li>The baseline score average established by the top 0.1% of performance parameters across all parallel sessions.</li>
-                  <li>The specific shift baseline mean paired with the standard deviation parameter for your designated exam hour.</li>
-                  <li>The total matching raw marks mean achieved across every operational candidate session in that specific notice cycle.</li>
-                </ul>
-                <p>By balancing performance bounds through standard calculations, this system presents highly accurate baseline estimation vectors across chosen targets seamlessly.</p>
-                
-                <div class="legal-box">
-                  <strong>Privacy Policy & Core Disclaimers</strong>
-                  <p>This tracking infrastructure processes structural marks calculations strictly locally within the active sandbox instance context of the browser. Session values, parameters, inputs, or identity flags are never processed by external systems or recorded inside external trace databases permanently.</p>
-                </div>
-              </article>
-
-              <!-- Detailed Structural Accordion FAQ Block For Long-Form Content Indexing -->
-              <article class="compliance-card" style="border-top: 4px solid #cbd5e1;">
-                <h2 style="font-size: 1.125rem;">Frequently Asked Questions (FAQ Archive)</h2>
-                <div style="margin-top: 12px; display:flex; flex-direction:column; gap:10px;">
-                  <details style="font-size: 0.815rem; background:#f8fafc; padding:10px; border-radius:8px; cursor: pointer;">
-                    <summary style="font-weight: 600; color: #1e293b;">How does changing the targeted exam dropdown redirect computation bounds?</summary>
-                    <p style="margin-top:6px; color: #64748b; line-height:1.5;">Selecting a specific exam dynamically re-allocates the maximum upper limit variable within the local validation array (e.g., scaling calculation limits safely down to 75 marks for RRB ALP CBT-1 versus up to 390 marks for SSC CGL Tier-2 Paper-1). This protects validation steps perfectly.</p>
-                  </details>
-                  <details style="font-size: 0.815rem; background:#f8fafc; padding:10px; border-radius:8px; cursor: pointer;">
-                    <summary style="font-weight: 600; color: #1e293b;">Can a normalized score fall beneath the raw input marks base?</summary>
-                    <p style="margin-top:6px; color: #64748b; line-height:1.5;">Yes. If an candidate performs inside an exceptionally low-difficulty, high-average shift environment, standard multi-shift formulas can slightly scale the normalized marks index below the initial raw input profile during official board allocations.</p>
-                  </details>
-                  <details style="font-size: 0.815rem; background:#f8fafc; padding:10px; border-radius:8px; cursor: pointer;">
-                    <summary style="font-weight: 600; color: #1e293b;">Does individual question tracking accuracy alter the prediction model?</summary>
-                    <p style="margin-top:6px; color: #64748b; line-height:1.5;">Official normalization logic measures the final calculated absolute net raw score (Total correct weight minus negative wrong penalties). Individual structural accuracy ratios do not directly alter standard multi-shift core deviations.</p>
-                  </details>
-                </div>
-              </article>
-
-              <p class="footer">Universal Automated Evaluation Engine Architecture for ${currentYear}. All recruitment rights apply.</p>
-            </main>
-          </div>`;
-
-        // RE-ATTACH DOM EVENT HANDLERS IN RETENTION LOOP
-        document.getElementById('examSelect').addEventListener('change', (e) => { 
-            selectedExamId = e.target.value; 
-            rawMarks = ''; // Safely clear out variables to protect data scale boundaries
-            result = null;
-            render(); 
-        });
-        document.getElementById('rawMarks').addEventListener('input', (e) => { rawMarks = e.target.value; });
-        document.getElementById('category').addEventListener('change', (e) => { category = e.target.value; });
-      }
-
-      window.handleCalculate = handleCalculate;
-      render();
-
-      setInterval(() => {
-          const clockEl = document.getElementById('live-clock');
-          if (clockEl) {
-              const now = new Date();
-              clockEl.innerText = 'LIVE Sync: ' + now.toLocaleTimeString();
+  <script type="text/babel">
+    // ---- Worker code inlined as Blob ----
+    const aiWorkerCode = `
+      importScripts("https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.46/lib/index.global.min.js");
+      let engine = null;
+      self.onmessage = async (e) => {
+        const { type, payload } = e.data;
+        if (type === "ACTIVATE") {
+          try {
+            engine = await webllm.CreateMLCEngine("SmolLM2-1.7B-Instruct-q4f16_1-MLC", {
+              initProgressCallback: (p) => {
+                self.postMessage({ type: "PROGRESS", detail: Math.round(p.progress * 100) });
+              }
+            });
+            self.postMessage({ type: "READY" });
+          } catch (err) {
+            self.postMessage({ type: "ERROR", error: err.message });
           }
-      }, 1000);
-    </script>
-  </body>
+        } else if (type === "DEACTIVATE") {
+          if (engine) {
+            await engine.unload();
+            engine = null;
+          }
+          self.postMessage({ type: "OFFLINE" });
+        } else if (type === "INFER") {
+          if (!engine) {
+            self.postMessage({ type: "ERROR", error: "Engine not ready" });
+            return;
+          }
+          try {
+            const response = await engine.chat.completions.create({
+              messages: payload.messages,
+              max_tokens: payload.max_tokens || 400,
+            });
+            self.postMessage({ type: "RESULT", result: response.choices[0].message.content });
+          } catch (err) {
+            self.postMessage({ type: "ERROR", error: err.message });
+          }
+        }
+      };
+    `;
+    const aiWorkerBlob = new Blob([aiWorkerCode], { type: 'application/javascript' });
+    const aiWorkerURL = URL.createObjectURL(aiWorkerBlob);
+
+    // ---- React app begins ----
+    const { useState, useEffect, useRef, useCallback } = React;
+    const Lucide = window.LucideReact;
+    const safeIcon = (name) => Lucide[name] || (() => null);
+    const FileText = safeIcon("FileText"), Upload = safeIcon("Upload"), Download = safeIcon("Download"),
+      Scissors = safeIcon("Scissors"), Archive = safeIcon("Archive"), RotateCw = safeIcon("RotateCw"),
+      Trash2 = safeIcon("Trash2"), Shield = safeIcon("Shield"), Lock = safeIcon("Lock"),
+      Unlock = safeIcon("Unlock"), Edit = safeIcon("Edit"), MessageSquare = safeIcon("MessageSquare"),
+      Globe = safeIcon("Globe"), Search = safeIcon("Search"), X = safeIcon("X"), Check = safeIcon("Check"),
+      AlertCircle = safeIcon("AlertCircle"), Loader2 = safeIcon("Loader2"), Zap = safeIcon("Zap"),
+      Star = safeIcon("Star"), ArrowRight = safeIcon("ArrowRight"), Hash = safeIcon("Hash"),
+      Eye = safeIcon("Eye"), Send = safeIcon("Send"), RefreshCw = safeIcon("RefreshCw"),
+      Plus = safeIcon("Plus"), ChevronRight = safeIcon("ChevronRight"), ChevronLeft = safeIcon("ChevronLeft"),
+      Wand2 = safeIcon("Wand2"), Sparkles = safeIcon("Sparkles"), Layers = safeIcon("Layers"),
+      Copy = safeIcon("Copy"), GitMerge = safeIcon("GitMerge"), Image = safeIcon("Image"),
+      Bot = safeIcon("Bot"), Table = safeIcon("Table"), Settings = safeIcon("Settings"),
+      Menu = safeIcon("Menu"), ChevronDown = safeIcon("ChevronDown"), FileSearch = safeIcon("FileSearch"),
+      Cpu = safeIcon("Cpu"), Brain = safeIcon("Brain"), Home = safeIcon("Home"),
+      FilePlus = safeIcon("FilePlus"), FileCheck = safeIcon("FileCheck"), Type = safeIcon("Type"),
+      Languages = safeIcon("Languages"), Key = safeIcon("Key"), BookOpen = safeIcon("BookOpen");
+
+    const T = {
+      bg: "#070B14", bgCard: "#0F1623", bgCardHover: "#151E2E",
+      bgInput: "#0A0F1C", border: "#1A2540", borderHover: "#2D3F66",
+      primary: "#7C3AED", primaryLight: "#9333EA", primaryGlow: "#7C3AED30",
+      accent: "#3B82F6", accentLight: "#60A5FA",
+      grad: "linear-gradient(135deg,#7C3AED,#3B82F6)",
+      gradHover: "linear-gradient(135deg,#9333EA,#2563EB)",
+      ai: "#A855F7", aiGlow: "#A855F720",
+      text: "#E8EEF7", textSub: "#7A8BA5", textMuted: "#4A5568",
+      success: "#22C55E", successBg: "#052010",
+      warn: "#F59E0B", warnBg: "#1C1000",
+      err: "#EF4444", errBg: "#1C0000",
+      green: "#10B981", teal: "#06B6D4", amber: "#F59E0B", red: "#EF4444"
+    };
+
+    const CATS = [
+      { id:"convert",  name:"Convert",    emoji:"🔄", color:T.accent,   desc:"PDF ↔ Word, Excel, Images & more" },
+      { id:"organize", name:"Organize",   emoji:"📁", color:T.green,    desc:"Merge, split, sort & reorder pages" },
+      { id:"edit",     name:"Edit",       emoji:"✏️",  color:T.amber,    desc:"Watermark, sign, annotate, redact" },
+      { id:"security", name:"Security",   emoji:"🔐", color:T.red,      desc:"Protect, unlock & sign securely" },
+      { id:"ai",       name:"Smart AI",   emoji:"🤖", color:T.ai,       desc:"Instant AI + neural upgrade" },
+      { id:"advanced", name:"Advanced",   emoji:"⚙️",  color:T.teal,     desc:"Optimize, repair & batch process" },
+    ];
+
+    const TOOLS = [
+      { id:"pdf-word",   cat:"convert",  name:"PDF to Word",       emoji:"📄", desc:"Turn your PDF into an editable Word document", hot:true, accepts:".pdf", multi:false, opts:[{id:"layout",label:"Keep formatting",type:"toggle",def:true}] },
+      { id:"pdf-excel",  cat:"convert",  name:"PDF to Excel",      emoji:"📊", desc:"Extract tables into a spreadsheet", hot:true, accepts:".pdf", multi:false, opts:[{id:"detect",label:"Smart table detection",type:"toggle",def:true}] },
+      { id:"pdf-ppt",    cat:"convert",  name:"PDF to PowerPoint", emoji:"📑", desc:"Create presentation slides from your PDF", hot:true, accepts:".pdf", multi:false, opts:[] },
+      { id:"pdf-jpg",    cat:"convert",  name:"PDF to JPG",        emoji:"🖼️", desc:"Save each page as a high‑quality image", hot:true, accepts:".pdf", multi:false, opts:[{id:"dpi",label:"Quality",type:"select",vals:["Good (72 DPI)","Better (150 DPI)","Best (300 DPI)"],def:"Better (150 DPI)"},{id:"quality",label:"Image quality",type:"slider",min:50,max:100,def:90}] },
+      { id:"pdf-png",    cat:"convert",  name:"PDF to PNG",        emoji:"🏞️", desc:"Convert pages to PNG images", accepts:".pdf", multi:false, opts:[{id:"dpi",label:"Quality",type:"select",vals:["Good","Better","Best"],def:"Better"}] },
+      { id:"pdf-text",   cat:"convert",  name:"PDF to Text",       emoji:"📝", desc:"Extract all readable text", accepts:".pdf", multi:false, opts:[{id:"fmt",label:"Format",type:"select",vals:["Plain text","With page markers","Structured"],def:"With page markers"}] },
+      { id:"jpg-pdf",    cat:"convert",  name:"JPG to PDF",        emoji:"🖼️", desc:"Combine your images into a single PDF", hot:true, accepts:".jpg,.jpeg,.png,.webp,.bmp,.gif", multi:true, opts:[{id:"size",label:"Page Size",type:"select",vals:["Fit to image","A4","Letter","A3"],def:"Fit to image"},{id:"ori",label:"Orientation",type:"select",vals:["Auto","Portrait","Landscape"],def:"Auto"}] },
+      { id:"word-pdf",   cat:"convert",  name:"Word to PDF",       emoji:"📄", desc:"Convert Word to PDF (paginated)", accepts:".docx,.doc", multi:false, opts:[] },
+      { id:"excel-pdf",  cat:"convert",  name:"Excel to PDF",      emoji:"📊", desc:"Convert Excel to PDF (paginated)", accepts:".xlsx,.xls", multi:false, opts:[] },
+      { id:"html-pdf",   cat:"convert",  name:"HTML to PDF",       emoji:"🌐", desc:"Convert a web page file to PDF", accepts:".html,.htm", multi:false, opts:[{id:"size",label:"Page Size",type:"select",vals:["A4","Letter","A3"],def:"A4"}] },
+      { id:"merge",      cat:"organize", name:"Merge PDFs",        emoji:"🔗", desc:"Combine several PDFs into one", hot:true, accepts:".pdf", multi:true, opts:[{id:"order",label:"Order",type:"select",vals:["As uploaded","Alphabetical"],def:"As uploaded"}] },
+      { id:"split",      cat:"organize", name:"Split PDF",         emoji:"✂️", desc:"Divide a PDF into several parts", hot:true, accepts:".pdf", multi:false, opts:[{id:"method",label:"Split by",type:"select",vals:["Individual pages","Custom ranges","File size"],def:"Individual pages"},{id:"ranges",label:"Page ranges (e.g. 1-3, 5, 7-9)",type:"text",def:""}] },
+      { id:"compress",   cat:"organize", name:"Compress PDF",      emoji:"🗜️", desc:"Make your PDF smaller", hot:true, accepts:".pdf", multi:false, opts:[{id:"level",label:"Compression",type:"select",vals:["Standard (quick)","Strong (reduce images)"],def:"Standard (quick)"},{id:"quality",label:"Image quality (strong)",type:"slider",min:10,max:100,def:50}] },
+      { id:"rotate",     cat:"organize", name:"Rotate PDF",        emoji:"🔃", desc:"Turn pages left or right", accepts:".pdf", multi:false, opts:[{id:"angle",label:"Rotation",type:"select",vals:["90° Clockwise","180°","90° Counter-clockwise"],def:"90° Clockwise"},{id:"pages",label:"Apply to",type:"select",vals:["All pages","Odd pages","Even pages"],def:"All pages"}] },
+      { id:"rm-pages",   cat:"organize", name:"Delete Pages",      emoji:"🗑️", desc:"Remove pages you don't need", accepts:".pdf", multi:false, opts:[{id:"pages",label:"Pages to delete (e.g. 1,3,5-8)",type:"text",def:""}] },
+      { id:"ext-pages",  cat:"organize", name:"Extract Pages",     emoji:"📋", desc:"Pull out selected pages as a new PDF", accepts:".pdf", multi:false, opts:[{id:"pages",label:"Pages to extract (e.g. 1-5,7,10)",type:"text",def:""}] },
+      { id:"reorder",    cat:"organize", name:"Reorder Pages",     emoji:"↕️", desc:"Drag & drop to change page order", accepts:".pdf", multi:false, opts:[] },
+      { id:"page-nums",  cat:"organize", name:"Add Page Numbers",  emoji:"🔢", desc:"Automatically number every page", accepts:".pdf", multi:false, opts:[{id:"pos",label:"Position",type:"select",vals:["Bottom Center","Bottom Right","Bottom Left","Top Center","Top Right","Top Left"],def:"Bottom Center"},{id:"start",label:"Start from",type:"number",min:1,def:1},{id:"fmt",label:"Format",type:"select",vals:["1, 2, 3","Page N of M","(N)","- N -"],def:"1, 2, 3"}] },
+      { id:"watermark",  cat:"edit",     name:"Watermark",         emoji:"💧", desc:"Stamp text on every page", hot:true, accepts:".pdf", multi:false, opts:[{id:"text",label:"Text",type:"text",def:"CONFIDENTIAL"},{id:"opacity",label:"Opacity",type:"slider",min:5,max:100,def:30},{id:"pos",label:"Position",type:"select",vals:["Diagonal center","Center","Top-left","Top-right","Bottom-left","Bottom-right"],def:"Diagonal center"},{id:"size",label:"Size",type:"select",vals:["Small","Medium","Large","Huge"],def:"Large"},{id:"color",label:"Color",type:"select",vals:["Gray","Red","Blue","Green","Black"],def:"Gray"},{id:"img",label:"Image (optional URL)",type:"text",def:""}] },
+      { id:"hdr-ftr",    cat:"edit",     name:"Header & Footer",   emoji:"⬆️", desc:"Add headers and footers", accepts:".pdf", multi:false, opts:[{id:"hdr",label:"Header",type:"text",def:""},{id:"ftr",label:"Footer",type:"text",def:""},{id:"fsz",label:"Font size",type:"select",vals:["Small","Normal","Large"],def:"Normal"}] },
+      { id:"redact",     cat:"edit",     name:"Black Out Text",    emoji:"⬛", desc:"Permanently removes text from visual layer (rasterized) or securely (image-only)", accepts:".pdf", multi:false, opts:[{id:"text",label:"Text to hide",type:"text",def:""},{id:"rep",label:"Replace with",type:"select",vals:["■■■■■","[REDACTED]","[CLASSIFIED]","White space"],def:"■■■■■"},{id:"secure",label:"Secure redaction (image-only, no hidden text)",type:"toggle",def:false}] },
+      { id:"annotate",   cat:"edit",     name:"Add Notes",         emoji:"💬", desc:"Stick notes anywhere on the page", accepts:".pdf", multi:false, opts:[{id:"note",label:"Note",type:"text",def:""},{id:"pos",label:"Position",type:"select",vals:["Top-left","Top-right","Bottom-left","Bottom-right","Center"],def:"Top-left"}] },
+      { id:"crop",       cat:"edit",     name:"Crop Pages",        emoji:"✂️", desc:"Trim the edges of your pages", accepts:".pdf", multi:false, opts:[{id:"preset",label:"Preset",type:"select",vals:["Remove margins","Custom","A4","Letter","Square"],def:"Remove margins"}] },
+      { id:"protect",    cat:"security", name:"Password Protect",  emoji:"🔐", desc:"Lock your PDF with a password", hot:true, accepts:".pdf", multi:false, opts:[{id:"pw",label:"Password",type:"password",def:""},{id:"pw2",label:"Confirm password",type:"password",def:""}] },
+      { id:"unlock",     cat:"security", name:"Unlock PDF",        emoji:"🔓", desc:"Remove password protection", accepts:".pdf", multi:false, opts:[{id:"pw",label:"Current password",type:"password",def:""}] },
+      { id:"sign",       cat:"security", name:"Sign PDF",          emoji:"✍️", desc:"Add your digital signature", hot:true, accepts:".pdf", multi:false, opts:[{id:"name",label:"Your name",type:"text",def:""},{id:"pos",label:"Position",type:"select",vals:["Bottom right","Bottom left","Bottom center","Custom"],def:"Bottom right"},{id:"img",label:"Signature image (optional URL)",type:"text",def:""}] },
+      { id:"flatten",    cat:"security", name:"Flatten PDF",       emoji:"🪟", desc:"Make changes permanent", accepts:".pdf", multi:false, opts:[] },
+      { id:"no-meta",    cat:"security", name:"Remove Info",       emoji:"🏷️", desc:"Clear hidden document details", accepts:".pdf", multi:false, opts:[] },
+      { id:"ai-sum",     cat:"ai",       name:"Smart Summary",     emoji:"📋", desc:"Instant + neural upgrade", hot:true, accepts:".pdf", multi:false, opts:[{id:"len",label:"Length",type:"select",vals:["Brief","Normal","Detailed"],def:"Normal"}] },
+      { id:"ai-trans",   cat:"ai",       name:"Smart Translate",   emoji:"🌍", desc:"350+ word dictionary + neural", hot:true, accepts:".pdf", multi:false, opts:[{id:"from",label:"From",type:"select",vals:["Auto-detect","English","Spanish","French","German","Chinese","Japanese","Hindi"],def:"Auto-detect"},{id:"to",label:"To",type:"select",vals:["Spanish","French","German","Chinese (Simplified)","Japanese","Hindi","Arabic","Portuguese","Russian","Korean","Italian","English"],def:"French"}] },
+      { id:"ai-analyze", cat:"ai",       name:"Document Insights", emoji:"🧠", desc:"Keyword + neural analysis", hot:true, accepts:".pdf", multi:false, opts:[{id:"type",label:"Type",type:"select",vals:["Full report","Sentiment only","Main topics","People & places"],def:"Full report"}] },
+      { id:"ai-chat",    cat:"ai",       name:"Chat with PDF",     emoji:"💬", desc:"Ask questions about your document", hot:true, accepts:".pdf", multi:false, opts:[{id:"question",label:"Your question",type:"text",def:""}] },
+      { id:"ocr-tesseract", cat:"ai", name:"Scan & Extract Text (OCR)", emoji:"🔍", desc:"Persistent worker, no memory crashes", accepts:".pdf,.jpg,.jpeg,.png,.tiff", multi:false, opts:[{id:"lang",label:"Language",type:"select",vals:["English","Hindi","Tamil","Telugu","Marathi","Gujarati","Kannada","Malayalam","Odia","Punjabi","Bengali","Assamese","Nepali","Urdu","Sanskrit","Sinhala","Thai","Japanese","Chinese (Simplified)","Chinese (Traditional)","Korean","French","Spanish","German","Italian","Portuguese","Russian","Arabic","Turkish","Dutch","Swedish","Finnish","Norwegian","Danish","Polish","Ukrainian","Czech","Slovak","Hungarian","Romanian","Bulgarian","Croatian","Serbian","Slovenian","Lithuanian","Latvian","Estonian","Indonesian","Malay","Tagalog","Swahili","Amharic","Hausa","Yoruba","Igbo","Zulu","Afrikaans"],def:"English"}] },
+      { id:"optimizer",  cat:"advanced", name:"PDF Optimizer",     emoji:"⚡", desc:"Tune your PDF for web, print, or email", accepts:".pdf", multi:false, opts:[{id:"target",label:"Goal",type:"select",vals:["Web (fast loading)","Print (high quality)","Email (small size)","Archive (PDF/A)"],def:"Web (fast loading)"}] },
+      { id:"repair",     cat:"advanced", name:"Repair PDF",        emoji:"🔧", desc:"Fix a corrupted PDF", accepts:".pdf", multi:false, opts:[] },
+      { id:"batch",      cat:"advanced", name:"Batch Process",     emoji:"⚡", desc:"Apply an action to multiple PDFs at once", accepts:".pdf", multi:true, opts:[{id:"op",label:"Action",type:"select",vals:["Compress all","Watermark all","Convert all to JPG","Add page numbers to all"],def:"Compress all"}] },
+      { id:"metadata",   cat:"advanced", name:"Change Details",    emoji:"🏷️", desc:"Edit title, author, and keywords", accepts:".pdf", multi:false, opts:[{id:"title",label:"Title",type:"text",def:""},{id:"author",label:"Author",type:"text",def:""},{id:"subject",label:"Subject",type:"text",def:""},{id:"kw",label:"Keywords",type:"text",def:""}] },
+      { id:"pdfa",       cat:"advanced", name:"PDF/A Converter",   emoji:"📚", desc:"Basic PDF/A (fonts + metadata)", accepts:".pdf", multi:false, opts:[{id:"std",label:"Version",type:"select",vals:["PDF/A-1b (basic)","PDF/A-2b (standard)","PDF/A-3b (attachments)"],def:"PDF/A-2b (standard)"}] },
+    ];
+
+    const readBuf  = f => new Promise((r,j)=>{ const rd=new FileReader(); rd.onload=()=>r(rd.result); rd.onerror=j; rd.readAsArrayBuffer(f); });
+    const readUrl  = f => new Promise((r,j)=>{ const rd=new FileReader(); rd.onload=()=>r(rd.result); rd.onerror=j; rd.readAsDataURL(f); });
+    const readText = f => new Promise((r,j)=>{ const rd=new FileReader(); rd.onload=()=>r(rd.result); rd.onerror=j; rd.readAsText(f); });
+    const dlBlob = (blob,name)=>{ const u=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=u; a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(u),1000); };
+    const fmtSize = b => b>1048576?`${(b/1048576).toFixed(1)} MB`:b>1024?`${(b/1024).toFixed(0)} KB`:`${b} B`;
+    const disposeCanvas = (canvas) => { if(canvas){ canvas.width=0; canvas.height=0; canvas.getContext('2d').clearRect(0,0,0,0); } };
+    const ensureScript = (src) => {
+      return new Promise((resolve, reject) => {
+        if (document.querySelector(`script[src="${src}"]`)) return resolve();
+        const s = document.createElement('script');
+        s.src = src;
+        s.async = false;
+        s.onload = resolve;
+        s.onerror = () => reject(new Error(`Failed to load ${src}`));
+        document.head.appendChild(s);
+      });
+    };
+
+    const extractText = async (file, onProgress) => {
+      if (!window.pdfjsLib) throw new Error('PDF reader not loaded.');
+      const pdfjs = window.pdfjsLib;
+      if (onProgress) onProgress(10);
+      const buf = await readBuf(file);
+      const pdf = await pdfjs.getDocument({ data: buf, disableAutoFetch: true, disableStream: true }).promise;
+      const n = pdf.numPages;
+      let text = "";
+      for (let i = 1; i <= n; i++) {
+        if (onProgress) onProgress(10 + Math.floor((i / n) * 80));
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        text += content.items.map(it => it.str).join(" ") + "\n";
+        page.cleanup();
+        if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
+      }
+      return text.trim().slice(0, 12000);
+    };
+
+    function detectColumns(items) {
+      const xVals = items.map(it => it.transform[4]);
+      if (xVals.length < 5) return [items];
+      xVals.sort((a,b)=>a-b);
+      const gaps = [];
+      let prev = xVals[0];
+      for (let i=1; i<xVals.length; i++) {
+        if (xVals[i] - prev > 30) gaps.push({ start: prev, end: xVals[i] });
+        prev = xVals[i];
+      }
+      if (gaps.length === 0) return [items];
+      gaps.sort((a,b)=>(b.end-b.start)-(a.end-a.start));
+      const columnThreshold = gaps[0].start + (gaps[0].end - gaps[0].start)/2;
+      const left = [], right = [];
+      items.forEach(item => {
+        if (item.transform[4] < columnThreshold) left.push(item);
+        else right.push(item);
+      });
+      return [left, right];
+    }
+
+    async function ensureDocx() { if (!window.docx) await ensureScript('https://unpkg.com/docx@8.2.0/build/index.umd.js'); }
+    async function ensureXlsx() { if (!window.XLSX) await ensureScript('https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js'); }
+    async function ensurePptx() { if (!window.PptxGenJS) await ensureScript('https://unpkg.com/pptxgenjs@3.12.0/dist/pptxgen.bundle.js'); }
+    async function ensureMammoth() { if (!window.mammoth) await ensureScript('https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js'); }
+    async function ensureHtml2canvas() { if (!window.html2canvas) await ensureScript('https://html2canvas.hertzen.com/dist/html2canvas.min.js'); }
+
+    // ---- PDF Processors (all fully defined) ----
+    const pdfToDocx = async (files, opts, prog) => {
+      await ensureDocx();
+      const pdfjs = window.pdfjsLib; prog(10);
+      const buf = await readBuf(files[0]);
+      const pdf = await pdfjs.getDocument({ data: buf, disableAutoFetch: true, disableStream: true }).promise;
+      const n = pdf.numPages;
+      const keepFormatting = opts.layout !== false;
+      const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, ImageRun } = window.docx;
+      const docChildren = [];
+      for (let i = 1; i <= n; i++) {
+        prog(10 + (i/n)*30);
+        const page = await pdf.getPage(i);
+        const ops = await page.getOperatorList();
+        const content = await page.getTextContent();
+        const imageObjs = [];
+        for (let j = 0; j < ops.fnArray.length; j++) {
+          if (ops.fnArray[j] === pdfjsLib.OPS.paintImageXObject) {
+            const imgKey = ops.argsArray[j][0];
+            try {
+              const img = await page.objs.get(imgKey);
+              if (img && img.data) imageObjs.push({ data: img.data, width: img.width, height: img.height });
+            } catch(e){}
+          }
+        }
+        const items = content.items;
+        if (items.length) {
+          const columns = detectColumns(items);
+          for (const colItems of columns) {
+            const linesMap = {};
+            colItems.forEach(item => {
+              const y = Math.round(item.transform[5] / 2) * 2;
+              if (!linesMap[y]) linesMap[y] = [];
+              linesMap[y].push(item);
+            });
+            const sortedYs = Object.keys(linesMap).map(Number).sort((a,b) => b - a);
+            if (!keepFormatting) {
+              sortedYs.forEach(y => {
+                const lineItems = linesMap[y].sort((a,b) => a.transform[4] - b.transform[4]);
+                const lineText = lineItems.map(it => it.str).join(' ').trim();
+                if (lineText) docChildren.push(new Paragraph({ children: [new TextRun({ text: lineText })] }));
+              });
+            } else {
+              for (const y of sortedYs) {
+                const lineItems = linesMap[y].sort((a,b) => a.transform[4] - b.transform[4]);
+                const xGaps = [];
+                for (let j = 1; j < lineItems.length; j++) {
+                  xGaps.push(lineItems[j].transform[4] - lineItems[j-1].transform[4]);
+                }
+                const isTableRow = lineItems.length >= 2 && Math.max(...xGaps) > 20;
+                if (isTableRow) {
+                  const lastChild = docChildren[docChildren.length-1];
+                  const row = new TableRow({
+                    children: lineItems.map(item => new TableCell({
+                      children: [new Paragraph({ children: [new TextRun({ text: item.str.trim() })] })],
+                      width: { size: 1500, type: WidthType.DXA }
+                    }))
+                  });
+                  if (lastChild instanceof Table) {
+                    lastChild.root.push(row);
+                  } else {
+                    docChildren.push(new Table({ rows: [row] }));
+                  }
+                } else {
+                  const text = lineItems.map(it => it.str).join(' ').trim();
+                  if (text) {
+                    const isBold = /bold/i.test(lineItems[0].fontName);
+                    const isItalic = /italic|oblique/i.test(lineItems[0].fontName);
+                    const isHeading = /^(Chapter|Section|\d+\.)\s/i.test(text) || (text.length < 60 && /^[A-Z\s]{4,}$/.test(text));
+                    if (isHeading) {
+                      docChildren.push(new Paragraph({ heading: HeadingLevel.HEADING_2, children: [new TextRun({ text, bold: true })] }));
+                    } else {
+                      docChildren.push(new Paragraph({ children: [new TextRun({ text, bold: isBold, italics: isItalic })] }));
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        for (const imgObj of imageObjs) {
+          try {
+            docChildren.push(new Paragraph({
+              children: [new ImageRun({ data: imgObj.data, transformation: { width: imgObj.width, height: imgObj.height }, type: 'png' })]
+            }));
+          } catch(e){}
+        }
+        page.cleanup();
+        if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
+      }
+      prog(80);
+      const doc = new Document({ sections: [{ children: docChildren }] });
+      const blob = await Packer.toBlob(doc);
+      prog(100);
+      return [{ blob, name: files[0].name.replace(/\.pdf$/i,'.docx') }];
+    };
+
+    const pdfToExcel = async (files, opts, prog) => {
+      await ensureXlsx();
+      const pdfjs = window.pdfjsLib; prog(10);
+      const buf = await readBuf(files[0]);
+      const pdf = await pdfjs.getDocument({ data: buf, disableAutoFetch: true, disableStream: true }).promise;
+      const n = pdf.numPages;
+      const smartDetection = opts.detect !== false;
+      const XLSX = window.XLSX;
+      const wb = XLSX.utils.book_new();
+      for (let i = 1; i <= n; i++) {
+        prog(10 + (i/n)*80);
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        const items = content.items;
+        if (!items.length) continue;
+        let dataRows;
+        if (smartDetection) {
+          const yTolerance = 5;
+          const rowsMap = {};
+          items.forEach(item => {
+            const y = Math.round(item.transform[5] / yTolerance) * yTolerance;
+            if (!rowsMap[y]) rowsMap[y] = [];
+            rowsMap[y].push(item);
+          });
+          const sortedYs = Object.keys(rowsMap).map(Number).sort((a,b) => b-a);
+          const allX = items.map(it => it.transform[4]).sort((a,b)=>a-b);
+          const xGap = 10;
+          const columnEdges = [];
+          columnEdges.push(allX[0]);
+          let prevX = allX[0];
+          for (let j=1; j<allX.length; j++) {
+            if (allX[j] - prevX > xGap) columnEdges.push(allX[j]);
+            prevX = allX[j];
+          }
+          dataRows = sortedYs.map(y => {
+            const rowItems = rowsMap[y];
+            const row = new Array(columnEdges.length).fill('');
+            rowItems.forEach(item => {
+              let colIndex = columnEdges.length-1;
+              for (let c = columnEdges.length-1; c >= 0; c--) {
+                if (item.transform[4] >= columnEdges[c]) { colIndex = c; break; }
+              }
+              row[colIndex] = (row[colIndex] ? row[colIndex] + ' ' + item.str : item.str);
+            });
+            return row.map(cell => cell.trim());
+          });
+        } else {
+          const yCoords = items.map(it => Math.round(it.transform[5] / 5) * 5);
+          const uniqueY = [...new Set(yCoords)].sort((a,b) => b-a);
+          dataRows = uniqueY.map(y => {
+            const rowItems = items.filter(it => Math.round(it.transform[5] / 5) * 5 === y).sort((a,b) => a.transform[4] - b.transform[4]);
+            return rowItems.map(it => it.str);
+          });
+        }
+        if (dataRows.length) {
+          const maxCols = Math.max(...dataRows.map(r => r.length));
+          const normalizedRows = dataRows.map(r => { while(r.length < maxCols) r.push(''); return r; });
+          const ws = XLSX.utils.aoa_to_sheet(normalizedRows);
+          XLSX.utils.book_append_sheet(wb, ws, `Page ${i}`);
+        }
+        page.cleanup();
+        if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
+      }
+      prog(95);
+      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      prog(100);
+      return [{ blob: new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), name: files[0].name.replace(/\.pdf$/i,'.xlsx') }];
+    };
+
+    const paginatedHtmlToPdf = async (html, progCallback) => {
+      await ensureHtml2canvas();
+      const { PDFDocument } = window.PDFLib;
+      const pdfDoc = await PDFDocument.create();
+      const pageWidth = 794, pageHeight = 1122, margin = 40;
+      const contentWidth = pageWidth - 2*margin, contentHeight = pageHeight - 2*margin;
+      const container = document.createElement('div');
+      container.style.width = contentWidth + 'px';
+      container.style.padding = margin + 'px';
+      container.style.fontFamily = 'Arial, sans-serif';
+      container.style.background = '#ffffff';
+      container.style.color = '#000';
+      container.innerHTML = html;
+      document.body.appendChild(container);
+      let currentPageY = 0;
+      const totalHeight = container.scrollHeight;
+      while (currentPageY < totalHeight) {
+        const clone = container.cloneNode(true);
+        clone.style.marginTop = -currentPageY + 'px';
+        const wrapper = document.createElement('div');
+        wrapper.style.width = contentWidth + 'px';
+        wrapper.style.overflow = 'hidden';
+        wrapper.style.height = contentHeight + 'px';
+        wrapper.appendChild(clone);
+        document.body.appendChild(wrapper);
+        const canvas = await html2canvas(wrapper, { scale: 2, allowTaint: true });
+        const img = await pdfDoc.embedPng(canvas.toDataURL('image/png'));
+        const page = pdfDoc.addPage([pageWidth, pageHeight]);
+        page.drawImage(img, { x: margin, y: margin, width: contentWidth, height: contentHeight });
+        document.body.removeChild(wrapper);
+        currentPageY += contentHeight;
+        if (progCallback) progCallback(Math.min(100, Math.floor((currentPageY / totalHeight) * 100)));
+      }
+      document.body.removeChild(container);
+      return await pdfDoc.save();
+    };
+
+    const wordToPdf = async (files, opts, prog) => {
+      await ensureMammoth();
+      prog(10);
+      const arrayBuffer = await readBuf(files[0]);
+      const result = await mammoth.convertToHtml({ arrayBuffer });
+      const html = result.value;
+      prog(30);
+      const pdfBytes = await paginatedHtmlToPdf(html, (p) => prog(30 + p*0.6));
+      prog(100);
+      return [{ blob: new Blob([pdfBytes], { type: 'application/pdf' }), name: files[0].name.replace(/\.docx?$/i,'.pdf') }];
+    };
+
+    const excelToPdf = async (files, opts, prog) => {
+      await ensureXlsx();
+      if (!window.XLSX) throw new Error("Spreadsheet library not loaded.");
+      prog(10);
+      const arrayBuffer = await readBuf(files[0]);
+      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+      const firstSheet = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[firstSheet];
+      const html = XLSX.utils.sheet_to_html(sheet);
+      prog(30);
+      const pdfBytes = await paginatedHtmlToPdf(html, (p) => prog(30 + p*0.6));
+      prog(100);
+      return [{ blob: new Blob([pdfBytes], { type: 'application/pdf' }), name: files[0].name.replace(/\.xlsx?$/i,'.pdf') }];
+    };
+
+    const pdfToPpt = async (files, opts, prog) => {
+      await ensurePptx();
+      const pdfjs = window.pdfjsLib; prog(10);
+      const buf = await readBuf(files[0]);
+      const pdf = await pdfjs.getDocument({ data: buf, disableAutoFetch: true, disableStream: true }).promise;
+      const n = pdf.numPages;
+      const pptx = new window.PptxGenJS();
+      const slideWidth = 10, slideHeight = 7.5;
+      const textX = 0.5, textW = 9;
+      const fontSize = 14, lineHeight = 0.3;
+      const maxLinesPerSlide = Math.floor((slideHeight - 1) / lineHeight);
+      for (let i = 1; i <= n; i++) {
+        prog(10 + (i/n)*80);
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        let rawText = textContent.items.map(item => item.str).join(' ').trim();
+        if (!rawText) {
+          pptx.addSlide().addText(`Page ${i} (no text)`, { x: 1, y: 2, w: '80%', fontSize: 24 });
+          continue;
+        }
+        const words = rawText.split(' ');
+        let currentSlideText = '';
+        for (const word of words) {
+          const testLine = currentSlideText ? currentSlideText + ' ' + word : word;
+          const estimatedLines = Math.ceil(testLine.length / 90);
+          if (estimatedLines > maxLinesPerSlide) {
+            pptx.addSlide().addText(currentSlideText, { x: textX, y: 0.5, w: textW, h: slideHeight-1, fontSize, valign: 'top' });
+            currentSlideText = word;
+          } else {
+            currentSlideText = testLine;
+          }
+        }
+        if (currentSlideText) pptx.addSlide().addText(currentSlideText, { x: textX, y: 0.5, w: textW, h: slideHeight-1, fontSize, valign: 'top' });
+        page.cleanup();
+        if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
+      }
+      prog(95);
+      const blob = await pptx.write({ outputType: 'blob' });
+      prog(100);
+      return [{ blob, name: files[0].name.replace(/\.pdf$/i,'.pptx') }];
+    };
+
+    const procs = {
+      "pdf-word": pdfToDocx,
+      "pdf-excel": pdfToExcel,
+      "pdf-ppt": pdfToPpt,
+      "pdf-jpg": async (files, opts, prog) => {
+        const pdfjs = window.pdfjsLib; prog(10);
+        const buf = await readBuf(files[0]);
+        const pdf = await pdfjs.getDocument({ data: buf, disableAutoFetch: true, disableStream: true }).promise;
+        const n = pdf.numPages;
+        const dpiMap = { "Good (72 DPI)":1, "Better (150 DPI)":2, "Best (300 DPI)":3.5 };
+        const scale = dpiMap[opts.dpi] || 2;
+        const results = [];
+        for (let i = 1; i <= n; i++) {
+          prog(10 + (i/n)*85);
+          const page = await pdf.getPage(i);
+          const vp = page.getViewport({ scale });
+          const canvas = document.createElement("canvas");
+          canvas.width = vp.width; canvas.height = vp.height;
+          await page.render({ canvasContext: canvas.getContext("2d"), viewport: vp }).promise;
+          const quality = (parseInt(opts.quality) || 90) / 100;
+          const blob = await new Promise(r => canvas.toBlob(r, "image/jpeg", quality));
+          results.push({ blob, name: `page-${i}.jpg` });
+          disposeCanvas(canvas);
+          page.cleanup();
+          if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
+        }
+        prog(100); return results;
+      },
+      "pdf-png": async (files, opts, prog) => {
+        const pdfjs = window.pdfjsLib; prog(10);
+        const buf = await readBuf(files[0]);
+        const pdf = await pdfjs.getDocument({ data: buf, disableAutoFetch: true, disableStream: true }).promise;
+        const n = pdf.numPages;
+        const dmap = { "Good":1, "Better":2, "Best":3.5 };
+        const scale = dmap[opts.dpi] || 2;
+        const results = [];
+        for (let i = 1; i <= n; i++) {
+          prog(10 + (i/n)*85);
+          const page = await pdf.getPage(i);
+          const vp = page.getViewport({ scale });
+          const canvas = document.createElement('canvas');
+          canvas.width = vp.width; canvas.height = vp.height;
+          await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+          const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+          results.push({ blob, name: `page-${i}.png` });
+          disposeCanvas(canvas);
+          page.cleanup();
+          if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
+        }
+        prog(100); return results;
+      },
+      "pdf-text": async (files, opts, prog) => {
+        const txt = await extractText(files[0], p => prog(p));
+        let output = txt;
+        if (opts.fmt === "Plain text") output = txt.replace(/─+ Page \d+ ─+/g, '');
+        const blob = new Blob([output], { type: "text/plain" });
+        return [{ blob, name: files[0].name.replace(/\.pdf$/i,'.txt'), preview: output.slice(0, 3000) }];
+      },
+      "jpg-pdf": async (files, opts, prog) => {
+        const { PDFDocument } = window.PDFLib; prog(5);
+        const doc = await PDFDocument.create();
+        for (let i = 0; i < files.length; i++) {
+          prog(5 + (i/files.length)*90);
+          const dataUrl = await readUrl(files[i]);
+          const b64 = dataUrl.split(",")[1];
+          const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+          const isJpeg = /jpe?g/i.test(files[i].type);
+          let img;
+          try { img = isJpeg ? await doc.embedJpg(bytes) : await doc.embedPng(bytes); }
+          catch(e) { img = await doc.embedJpg(bytes); }
+          const { width, height } = img.scale(1);
+          const pg = doc.addPage([width, height]);
+          pg.drawImage(img, { x:0, y:0, width, height });
+        }
+        const b = await doc.save();
+        return [{ blob: new Blob([b], { type: "application/pdf" }), name: "images.pdf" }];
+      },
+      "word-pdf": wordToPdf,
+      "excel-pdf": excelToPdf,
+      "html-pdf": async (files, opts, prog) => {
+        await ensureHtml2canvas();
+        prog(10);
+        const htmlText = await readText(files[0]);
+        const container = document.createElement('div');
+        container.style.width = '794px';
+        container.innerHTML = htmlText;
+        document.body.appendChild(container);
+        const canvas = await html2canvas(container, { scale: 2 });
+        document.body.removeChild(container);
+        prog(70);
+        const { PDFDocument } = window.PDFLib;
+        const pdfDoc = await PDFDocument.create();
+        const img = await pdfDoc.embedPng(canvas.toDataURL('image/png'));
+        const page = pdfDoc.addPage([canvas.width, canvas.height]);
+        page.drawImage(img, { x: 0, y: 0, width: canvas.width, height: canvas.height });
+        const pdfBytes = await pdfDoc.save();
+        prog(100);
+        return [{ blob: new Blob([pdfBytes], { type: 'application/pdf' }), name: files[0].name.replace(/\.html?$/i,'.pdf') }];
+      },
+      merge: async (files, opts, prog) => {
+        const { PDFDocument } = window.PDFLib; prog(10);
+        const out = await PDFDocument.create();
+        for (let i = 0; i < files.length; i++) {
+          prog(10 + (i/files.length)*80);
+          const d = await PDFDocument.load(await readBuf(files[i]));
+          const ps = await out.copyPages(d, d.getPageIndices());
+          ps.forEach(p => out.addPage(p));
+        }
+        const b = await out.save();
+        return [{ blob: new Blob([b], { type: "application/pdf" }), name: "merged.pdf" }];
+      },
+      split: async (files, opts, prog) => {
+        const { PDFDocument } = window.PDFLib; prog(10);
+        const src = await PDFDocument.load(await readBuf(files[0]));
+        const tot = src.getPageCount(); const results = [];
+        if ((opts.method||"Individual pages") === "Individual pages") {
+          for (let i = 0; i < tot; i++) {
+            prog(10 + (i/tot)*85);
+            const nd = await PDFDocument.create();
+            const [p] = await nd.copyPages(src, [i]); nd.addPage(p);
+            results.push({ blob: new Blob([await nd.save()], { type: "application/pdf" }), name: `page-${i+1}.pdf` });
+          }
+        } else {
+          const raw = opts.ranges || ""; const ranges = raw.split(",").map(r => r.trim()).filter(Boolean);
+          if (!ranges.length) ranges.push(`1-${tot}`);
+          for (let ri = 0; ri < ranges.length; ri++) {
+            prog(10 + (ri/ranges.length)*85);
+            const r = ranges[ri]; const idxs = [];
+            if (r.includes("-")) { const [a,b] = r.split("-").map(n => parseInt(n)-1); for (let i=a;i<=b&&i<tot;i++) idxs.push(i); }
+            else { const n = parseInt(r)-1; if (n>=0 && n<tot) idxs.push(n); }
+            const nd = await PDFDocument.create();
+            const ps = await nd.copyPages(src, idxs); ps.forEach(p => nd.addPage(p));
+            results.push({ blob: new Blob([await nd.save()], { type: "application/pdf" }), name: `part-${ri+1}.pdf` });
+          }
+        }
+        return results;
+      },
+      compress: async (files, opts, prog) => {
+        const { PDFDocument } = window.PDFLib;
+        const file = files[0];
+        const originalSize = file.size;
+        const level = opts.level || "Standard (quick)";
+        prog(5);
+        const doc = await PDFDocument.load(await readBuf(file), { ignoreEncryption: true });
+        prog(15);
+        if (level.includes("Standard")) {
+          const compressedBytes = await doc.save({ useObjectStreams: true });
+          prog(100);
+          return [{ blob: new Blob([compressedBytes], { type: "application/pdf" }), name: "compressed.pdf",
+            sizeReduction: `${Math.round((1 - compressedBytes.byteLength / originalSize) * 100)}% smaller` }];
+        } else {
+          const pdfjs = window.pdfjsLib;
+          const buf = await readBuf(file);
+          const pdf = await pdfjs.getDocument({ data: buf, disableAutoFetch: true, disableStream: true }).promise;
+          const n = pdf.numPages;
+          const quality = (parseInt(opts.quality) || 50) / 100;
+          const newDoc = await PDFDocument.create();
+          let estimatedSize = 0;
+          for (let i = 1; i <= Math.min(n, 5); i++) {
+            const page = await pdf.getPage(i);
+            const vp = page.getViewport({ scale: 1.5 });
+            const canvas = document.createElement('canvas');
+            canvas.width = vp.width; canvas.height = vp.height;
+            await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+            const jpeg = canvas.toDataURL('image/jpeg', quality);
+            estimatedSize += jpeg.length * 0.7;
+            disposeCanvas(canvas);
+          }
+          const estTotal = (estimatedSize / Math.min(n, 5)) * n;
+          prog(20);
+          for (let i = 1; i <= n; i++) {
+            prog(20 + Math.floor((i / n) * 70));
+            const page = await pdf.getPage(i);
+            const vp = page.getViewport({ scale: 1.5 });
+            const canvas = document.createElement('canvas');
+            canvas.width = vp.width; canvas.height = vp.height;
+            await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+            const jpegDataUrl = canvas.toDataURL('image/jpeg', quality);
+            const b64 = jpegDataUrl.split(',')[1];
+            const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+            const img = await newDoc.embedJpg(bytes);
+            const pg = newDoc.addPage([vp.width, vp.height]);
+            pg.drawImage(img, { x: 0, y: 0, width: vp.width, height: vp.height });
+            disposeCanvas(canvas);
+            page.cleanup();
+            if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
+          }
+          prog(95);
+          const compressedBytes = await newDoc.save();
+          prog(100);
+          return [{ blob: new Blob([compressedBytes], { type: "application/pdf" }), name: "compressed.pdf",
+            sizeReduction: `${Math.round((1 - compressedBytes.byteLength / originalSize) * 100)}% smaller`,
+            estimatedSize: fmtSize(estTotal) + ' (estimated)' }];
+        }
+      },
+      rotate: async (files, opts, prog) => {
+        const { PDFDocument, degrees } = window.PDFLib; prog(10);
+        const doc = await PDFDocument.load(await readBuf(files[0]));
+        const pages = doc.getPages();
+        const amap = { "90° Clockwise":90, "180°":180, "90° Counter-clockwise":270 };
+        const ang = amap[opts.angle] || 90;
+        pages.forEach((p,i) => {
+          const sel = opts.pages || "All pages";
+          if (sel === "All pages" || (sel === "Odd pages" && (i+1)%2!==0) || (sel === "Even pages" && (i+1)%2===0))
+            p.setRotation(degrees((p.getRotation().angle + ang) % 360));
+          prog(10 + (i+1)/pages.length*85);
+        });
+        const b = await doc.save();
+        return [{ blob: new Blob([b], { type: "application/pdf" }), name: "rotated.pdf" }];
+      },
+      "rm-pages": async (files, opts, prog) => {
+        const { PDFDocument } = window.PDFLib; prog(15);
+        const doc = await PDFDocument.load(await readBuf(files[0]));
+        const tot = doc.getPageCount(); const toRm = new Set();
+        (opts.pages || "").split(",").forEach(r => {
+          r=r.trim(); if (r.includes("-")) { const [a,b]=r.split("-").map(n=>parseInt(n)-1); for (let i=a;i<=b;i++) toRm.add(i); }
+          else toRm.add(parseInt(r)-1);
+        });
+        Array.from(toRm).filter(i=>i>=0&&i<tot).sort((a,b)=>b-a).forEach(i=>doc.removePage(i));
+        const b = await doc.save();
+        return [{ blob: new Blob([b], { type: "application/pdf" }), name: "pages-removed.pdf" }];
+      },
+      "ext-pages": async (files, opts, prog) => {
+        const { PDFDocument } = window.PDFLib; prog(15);
+        const src = await PDFDocument.load(await readBuf(files[0]));
+        const tot = src.getPageCount(); const idxs = [];
+        (opts.pages || `1-${tot}`).split(",").forEach(r => {
+          r=r.trim(); if (r.includes("-")) { const [a,b]=r.split("-").map(n=>parseInt(n)-1); for (let i=a;i<=b&&i<tot;i++) idxs.push(i); }
+          else { const n=parseInt(r)-1; if (n>=0&&n<tot) idxs.push(n); }
+        });
+        const nd = await PDFDocument.create();
+        const ps = await nd.copyPages(src, idxs.sort((a,b)=>a-b)); ps.forEach(p=>nd.addPage(p));
+        const b = await nd.save();
+        return [{ blob: new Blob([b], { type: "application/pdf" }), name: "extracted-pages.pdf" }];
+      },
+      reorder: async () => { throw new Error("Use the drag‑and‑drop reorder interface."); },
+      "page-nums": async (files, opts, prog) => {
+        const { PDFDocument, rgb, StandardFonts } = window.PDFLib; prog(10);
+        const doc = await PDFDocument.load(await readBuf(files[0]));
+        const font = await doc.embedFont(StandardFonts.Helvetica);
+        const pages = doc.getPages(); const tot = pages.length; const start = parseInt(opts.start)||1;
+        pages.forEach((page,i) => {
+          const { width, height } = page.getSize(); const pn = i+start;
+          let txt = opts.fmt==="Page N of M"?`Page ${pn} of ${tot}`:opts.fmt==="(N)"?`(${pn})`:opts.fmt==="- N -"?`- ${pn} -`:`${pn}`;
+          const fsz=10; const tw=font.widthOfTextAtSize(txt,fsz);
+          const pmap = { "Bottom Center":{x:(width-tw)/2,y:18}, "Bottom Right":{x:width-tw-25,y:18}, "Bottom Left":{x:25,y:18}, "Top Center":{x:(width-tw)/2,y:height-25}, "Top Right":{x:width-tw-25,y:height-25}, "Top Left":{x:25,y:height-25} };
+          const {x,y}=pmap[opts.pos]||pmap["Bottom Center"];
+          page.drawText(txt,{x,y,size:fsz,font,color:rgb(0.3,0.3,0.3)});
+          prog(10+(i+1)/tot*85);
+        });
+        const b = await doc.save();
+        return [{ blob: new Blob([b], { type: "application/pdf" }), name: "numbered.pdf" }];
+      },
+      watermark: async (files, opts, prog) => {
+        const { PDFDocument, rgb, degrees, StandardFonts } = window.PDFLib; prog(10);
+        const doc = await PDFDocument.load(await readBuf(files[0]));
+        const font = await doc.embedFont(StandardFonts.HelveticaBold);
+        const pages = doc.getPages();
+        const smap = { Small:22, Medium:36, Large:50, Huge:70 };
+        const cmap = { Gray:rgb(0.5,0.5,0.5), Red:rgb(0.8,0.1,0.1), Blue:rgb(0.1,0.1,0.8), Green:rgb(0.1,0.6,0.1), Black:rgb(0,0,0) };
+        const fsz = smap[opts.size]||50; const col = cmap[opts.color]||rgb(0.5,0.5,0.5);
+        const opa = (parseInt(opts.opacity)||30)/100; const txt = opts.text||"WATERMARK";
+        const imgUrl = opts.img || null;
+        for (let i = 0; i < pages.length; i++) {
+          const page = pages[i];
+          const { width, height } = page.getSize();
+          const tw = font.widthOfTextAtSize(txt,fsz);
+          let x=(width-tw)/2, y=height/2, rot=0;
+          if (opts.pos==="Diagonal center") rot=45;
+          else if (opts.pos==="Top-left"){ x=30;y=height-30; } else if (opts.pos==="Top-right"){ x=width-tw-30;y=height-30; }
+          else if (opts.pos==="Bottom-left"){ x=30;y=30; } else if (opts.pos==="Bottom-right"){ x=width-tw-30;y=30; }
+          page.drawText(txt,{x,y,size:fsz,font,color:col,opacity:opa,rotate:degrees(rot)});
+          if (imgUrl) {
+            try {
+              const imgBytes = Uint8Array.from(atob(imgUrl.split(',')[1] || ''), c => c.charCodeAt(0));
+              const embedImg = await doc.embedPng(imgBytes);
+              page.drawImage(embedImg, { x: width/2 - 50, y: height/2 - 50, width: 100, height: 100, opacity: opa });
+            } catch(e){}
+          }
+          prog(10+(i+1)/pages.length*85);
+        }
+        const b = await doc.save();
+        return [{ blob: new Blob([b], { type: "application/pdf" }), name: "watermarked.pdf" }];
+      },
+      "hdr-ftr": async (files, opts, prog) => {
+        const { PDFDocument, rgb, StandardFonts } = window.PDFLib; prog(10);
+        const doc = await PDFDocument.load(await readBuf(files[0]));
+        const font = await doc.embedFont(StandardFonts.Helvetica);
+        const fsz = opts.fsz==="Small"?8:opts.fsz==="Large"?12:10;
+        doc.getPages().forEach((page,i) => {
+          const { width, height } = page.getSize();
+          if (opts.hdr) { const tw=font.widthOfTextAtSize(opts.hdr,fsz); page.drawText(opts.hdr,{x:(width-tw)/2,y:height-22,size:fsz,font,color:rgb(0.2,0.2,0.2)}); }
+          if (opts.ftr) { const tw=font.widthOfTextAtSize(opts.ftr,fsz); page.drawText(opts.ftr,{x:(width-tw)/2,y:12,size:fsz,font,color:rgb(0.2,0.2,0.2)}); }
+          prog(10+(i+1)/doc.getPages().length*85);
+        });
+        const b = await doc.save();
+        return [{ blob: new Blob([b], { type: "application/pdf" }), name: "with-header-footer.pdf" }];
+      },
+      redact: async (files, opts, prog) => {
+        const pdfjs = window.pdfjsLib;
+        const { PDFDocument } = window.PDFLib;
+        const searchText = opts.text||"";
+        const replaceChar = opts.rep||"■■■■■";
+        const secureMode = opts.secure || false;
+        const buf = await readBuf(files[0]);
+        const pdf = await pdfjs.getDocument({ data: buf, disableAutoFetch: true, disableStream: true }).promise;
+        const n = pdf.numPages;
+        const newDoc = await PDFDocument.create();
+        for (let i = 1; i <= n; i++) {
+          prog(15 + (i/n)*80);
+          const page = await pdf.getPage(i);
+          const viewport = page.getViewport({ scale: 2 });
+          const canvas = document.createElement('canvas');
+          canvas.width = viewport.width; canvas.height = viewport.height;
+          const ctx = canvas.getContext('2d');
+          await page.render({ canvasContext: ctx, viewport }).promise;
+          if (secureMode) {
+            const pngDataUrl = canvas.toDataURL('image/png');
+            const pngBytes = Uint8Array.from(atob(pngDataUrl.split(',')[1]), c => c.charCodeAt(0));
+            const img = await newDoc.embedPng(pngBytes);
+            const pg = newDoc.addPage([viewport.width, viewport.height]);
+            pg.drawImage(img, { x: 0, y: 0, width: viewport.width, height: viewport.height });
+          } else {
+            const content = await page.getTextContent();
+            for (const item of content.items) {
+              if (item.str.toLowerCase().includes(searchText.toLowerCase())) {
+                const { transform, width, height } = item;
+                const x = transform[4];
+                const y = transform[5];
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(x, viewport.height - y - height, width, height);
+                if (replaceChar !== "White space") {
+                  ctx.fillStyle = '#ffffff';
+                  ctx.font = '8px Arial';
+                  ctx.fillText(replaceChar, x, viewport.height - y - height/2);
+                }
+              }
+            }
+            const pngDataUrl = canvas.toDataURL('image/png');
+            const pngBytes = Uint8Array.from(atob(pngDataUrl.split(',')[1]), c => c.charCodeAt(0));
+            const img = await newDoc.embedPng(pngBytes);
+            const pg = newDoc.addPage([viewport.width, viewport.height]);
+            pg.drawImage(img, { x: 0, y: 0, width: viewport.width, height: viewport.height });
+          }
+          disposeCanvas(canvas);
+          page.cleanup();
+          if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
+        }
+        prog(100);
+        const b = await newDoc.save();
+        return [{ blob: new Blob([b], { type: "application/pdf" }), name: "redacted.pdf" }];
+      },
+      annotate: async (files, opts, prog) => {
+        const { PDFDocument, rgb, StandardFonts } = window.PDFLib; prog(15);
+        const doc = await PDFDocument.load(await readBuf(files[0]));
+        const font = await doc.embedFont(StandardFonts.Helvetica);
+        const note = opts.note||"Note"; const pos = opts.pos||"Top-left";
+        doc.getPages().forEach((page,i) => {
+          const { width, height } = page.getSize();
+          let x,y;
+          switch(pos) {
+            case "Top-left": x=30; y=height-30; break;
+            case "Top-right": x=width-100; y=height-30; break;
+            case "Bottom-left": x=30; y=30; break;
+            case "Bottom-right": x=width-100; y=30; break;
+            default: x=width/2-50; y=height/2;
+          }
+          page.drawText(note, {x,y,size:12,font,color:rgb(1,0.8,0),borderWidth:1,borderColor:rgb(0,0,0),padding:4});
+          prog(10+(i+1)/doc.getPages().length*85);
+        });
+        const b = await doc.save();
+        return [{ blob: new Blob([b], { type: "application/pdf" }), name: "annotated.pdf" }];
+      },
+      crop: async (files, opts, prog) => {
+        const { PDFDocument } = window.PDFLib; prog(15);
+        const doc = await PDFDocument.load(await readBuf(files[0]));
+        const preset = opts.preset||"Remove margins";
+        doc.getPages().forEach((page,i) => {
+          const { width, height } = page.getSize();
+          let newBox = { x:0, y:0, width, height };
+          if (preset==="Remove margins") { const m=0.05; newBox={ x:width*m, y:height*m, width:width*(1-2*m), height:height*(1-2*m) }; }
+          else if (preset==="A4") newBox={ x:0,y:0,width:595,height:842 };
+          else if (preset==="Letter") newBox={ x:0,y:0,width:612,height:792 };
+          else if (preset==="Square") { const s=Math.min(width,height); newBox={ x:(width-s)/2,y:(height-s)/2,width:s,height:s }; }
+          page.setMediaBox(newBox.x, newBox.y, newBox.width, newBox.height);
+          prog(15+(i+1)/doc.getPages().length*80);
+        });
+        const b = await doc.save();
+        return [{ blob: new Blob([b], { type: "application/pdf" }), name: "cropped.pdf" }];
+      },
+      protect: async (files, opts, prog) => {
+        const { PDFDocument } = window.PDFLib; prog(20);
+        if (opts.pw !== opts.pw2) throw new Error("Passwords do not match");
+        const doc = await PDFDocument.load(await readBuf(files[0]));
+        const b = await doc.save({
+          userPassword: opts.pw||"password", ownerPassword: (opts.pw||"password")+"_owner",
+          permissions: { printing:"highResolution", modifying:false, copying:false, annotating:false, fillingForms:false, contentAccessibility:true, documentAssembly:false }
+        });
+        return [{ blob: new Blob([b], { type: "application/pdf" }), name: "protected.pdf" }];
+      },
+      unlock: async (files, opts, prog) => {
+        prog(20);
+        const { PDFDocument } = window.PDFLib;
+        try {
+          const doc = await PDFDocument.load(await readBuf(files[0]), { password: opts.pw || undefined });
+          const b = await doc.save();
+          prog(100);
+          return [{ blob: new Blob([b], { type: "application/pdf" }), name: "unlocked.pdf" }];
+        } catch (e) {
+          throw new Error("Incorrect password or file is encrypted with a format not supported in the browser.");
+        }
+      },
+      sign: async (files, opts, prog) => {
+        const { PDFDocument, rgb, StandardFonts } = window.PDFLib; prog(15);
+        const doc = await PDFDocument.load(await readBuf(files[0]));
+        const pages = doc.getPages(); const pg = pages[pages.length-1];
+        const { width, height } = pg.getSize();
+        const font = await doc.embedFont(StandardFonts.HelveticaOblique);
+        const name = opts.name||"Signed Document"; const fsz=18;
+        const tw=font.widthOfTextAtSize(name,fsz);
+        const posMap={"Bottom right":{x:width-tw-40,y:35},"Bottom left":{x:40,y:35},"Bottom center":{x:(width-tw)/2,y:35},"Custom":{x:width-tw-40,y:35}};
+        const {x,y}=posMap[opts.pos]||posMap["Bottom right"];
+        pg.drawText(name,{x,y,size:fsz,font,color:rgb(0.1,0.1,0.6),opacity:0.85});
+        pg.drawLine({start:{x:x-5,y:y-4},end:{x:x+tw+5,y:y-4},thickness:0.5,color:rgb(0.1,0.1,0.6),opacity:0.6});
+        if (opts.img) {
+          try {
+            const imgBytes = Uint8Array.from(atob(opts.img.split(',')[1] || ''), c => c.charCodeAt(0));
+            const embedImg = await doc.embedPng(imgBytes);
+            pg.drawImage(embedImg, { x: x, y: y+20, width: 100, height: 40 });
+          } catch(e){}
+        }
+        const b = await doc.save();
+        return [{ blob: new Blob([b], { type: "application/pdf" }), name: "signed.pdf" }];
+      },
+      flatten: async (files, opts, prog) => {
+        const { PDFDocument } = window.PDFLib; prog(30);
+        const doc = await PDFDocument.load(await readBuf(files[0]));
+        doc.getForm().flatten();
+        const b = await doc.save();
+        return [{ blob: new Blob([b], { type: "application/pdf" }), name: "flattened.pdf" }];
+      },
+      "no-meta": async (files, opts, prog) => {
+        const { PDFDocument } = window.PDFLib; prog(20);
+        const doc = await PDFDocument.load(await readBuf(files[0]));
+        doc.setTitle(""); doc.setAuthor(""); doc.setSubject(""); doc.setKeywords([]); doc.setProducer(""); doc.setCreator("");
+        const b = await doc.save();
+        return [{ blob: new Blob([b], { type: "application/pdf" }), name: "no-metadata.pdf" }];
+      },
+      optimizer: async (files, opts, prog) => {
+        const { PDFDocument } = window.PDFLib; prog(20);
+        const doc = await PDFDocument.load(await readBuf(files[0]));
+        doc.setProducer("SGN PDF House"); doc.setCreator("");
+        const b = await doc.save({ useObjectStreams: true });
+        return [{ blob: new Blob([b], { type: "application/pdf" }), name: "optimized.pdf" }];
+      },
+      repair: async (files, opts, prog) => {
+        prog(30);
+        const { PDFDocument } = window.PDFLib;
+        try {
+          const doc = await PDFDocument.load(await readBuf(files[0]), { ignoreEncryption: true });
+          const b = await doc.save({ useObjectStreams: true });
+          prog(100);
+          return [{ blob: new Blob([b], { type: "application/pdf" }), name: "repaired.pdf" }];
+        } catch (e) {
+          throw new Error("This PDF is severely damaged and cannot be repaired in the browser.");
+        }
+      },
+      batch: async (files, opts, prog) => {
+        const op = opts.op||"Compress all";
+        const JSZip = window.JSZip; const zip = new JSZip();
+        for (let i=0;i<files.length;i++) {
+          prog((i/files.length)*80);
+          const file=files[i]; let result;
+          if (op.includes("Compress")) result=await procs.compress([file],{level:"Standard (quick)"},()=>{});
+          else if (op.includes("Watermark")) result=await procs.watermark([file],{text:"BATCH",size:"Medium",opacity:30,pos:"Diagonal center",color:"Gray"},()=>{});
+          else if (op.includes("JPG")) result=await procs["pdf-jpg"]([file],{dpi:"Better (150 DPI)",quality:90},()=>{});
+          else if (op.includes("page numbers")) result=await procs["page-nums"]([file],{pos:"Bottom Center",start:1,fmt:"1, 2, 3"},()=>{});
+          if (result&&result[0]&&result[0].blob) zip.file(result[0].name,result[0].blob);
+        }
+        const blob = await zip.generateAsync({ type:"blob" });
+        return [{ blob, name: "batch-output.zip" }];
+      },
+      metadata: async (files, opts, prog) => {
+        const { PDFDocument } = window.PDFLib; prog(20);
+        const doc = await PDFDocument.load(await readBuf(files[0]));
+        if (opts.title) doc.setTitle(opts.title);
+        if (opts.author) doc.setAuthor(opts.author);
+        if (opts.subject) doc.setSubject(opts.subject);
+        if (opts.kw) doc.setKeywords([opts.kw]);
+        const b = await doc.save();
+        return [{ blob: new Blob([b], { type: "application/pdf" }), name: "updated-metadata.pdf" }];
+      },
+      pdfa: async (files, opts, prog) => {
+        prog(30);
+        const { PDFDocument, StandardFonts } = window.PDFLib;
+        const doc = await PDFDocument.load(await readBuf(files[0]));
+        doc.setTitle(doc.getTitle()||"Converted PDF/A");
+        doc.setCreator("SGN PDF House");
+        doc.setProducer("SGN PDF House");
+        await doc.embedFont(StandardFonts.Helvetica);
+        await doc.embedFont(StandardFonts.HelveticaBold);
+        const b = await doc.save({ useObjectStreams: true });
+        prog(100);
+        return [{ blob: new Blob([b], { type: "application/pdf" }), name: "pdfa.pdf" }];
+      },
+      "ocr-tesseract": async (files, opts, prog) => {
+        if (!window.Tesseract) {
+          await ensureScript('https://unpkg.com/tesseract.js@5.0.0/dist/tesseract.min.js');
+        }
+        const Tesseract = window.Tesseract;
+        const langCode = (opts.lang || 'English').split(' ')[0].toLowerCase();
+        const file = files[0];
+        let fullText = '', hocrOutput = '';
+
+        if (file.type === 'application/pdf') {
+          const pdfjs = window.pdfjsLib;
+          const buf = await readBuf(file);
+          const pdf = await pdfjs.getDocument({ data: buf, disableAutoFetch: true, disableStream: true }).promise;
+          const n = pdf.numPages;
+          const worker = await Tesseract.createWorker();
+          await worker.loadLanguage(langCode);
+          await worker.initialize(langCode);
+          await worker.setParameters({ tessedit_create_hocr: '1' });
+          for (let i = 1; i <= n; i++) {
+            prog(10 + Math.floor((i / n) * 70));
+            const page = await pdf.getPage(i);
+            const vp = page.getViewport({ scale: 2.5 });
+            const canvas = document.createElement('canvas');
+            canvas.width = vp.width; canvas.height = vp.height;
+            const ctx = canvas.getContext('2d');
+            await page.render({ canvasContext: ctx, viewport: vp }).promise;
+            const { data: { text, hocr } } = await worker.recognize(canvas);
+            fullText += text + '\n';
+            hocrOutput += hocr + '\n';
+            disposeCanvas(canvas);
+            page.cleanup();
+            if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
+          }
+          await worker.terminate();
+        } else {
+          prog(10);
+          const worker = await Tesseract.createWorker();
+          await worker.loadLanguage(langCode);
+          await worker.initialize(langCode);
+          await worker.setParameters({ tessedit_create_hocr: '1' });
+          const result = await worker.recognize(file);
+          fullText = result.data.text;
+          hocrOutput = result.data.hocr;
+          await worker.terminate();
+        }
+        prog(85);
+        let tableText = '';
+        if (hocrOutput) {
+          const tableRegex = /<table[^>]*>(.*?)<\/table>/gs;
+          const matches = hocrOutput.matchAll(tableRegex);
+          for (const match of matches) {
+            tableText += '\n[TABLE DETECTED]\n';
+            const cellRegex = /class='ocrx_word'[^>]*>([^<]+)</g;
+            const cells = match[1].matchAll(cellRegex);
+            for (const cell of cells) tableText += cell[1].trim() + '\t';
+            tableText += '\n';
+          }
+        }
+        const blobContent = fullText + (tableText ? '\n\n=== Extracted Table Data ===\n' + tableText : '');
+        const blob = new Blob([blobContent], { type: 'text/plain' });
+        prog(100);
+        return [{ blob, name: file.name.replace(/\.\w+$/, '.txt'), preview: blobContent.slice(0, 3000) }];
+      },
+    };
+
+    // ---- AI Fallbacks & Dictionary ----
+    const extractiveSummary = (text, numSentences = 3) => {
+      const sentences = text.match(/[^.!?\n]+[.!?\n]*/g) || [text];
+      if (sentences.length <= numSentences) return sentences.join(' ').trim();
+      const wordFreq = {};
+      sentences.forEach(s => {
+        s.toLowerCase().split(/\W+/).forEach(w => { if (w.length > 3) wordFreq[w] = (wordFreq[w] || 0) + 1; });
+      });
+      const scored = sentences.map(s => ({ s, score: s.toLowerCase().split(/\W+/).reduce((acc, w) => acc + (wordFreq[w] || 0), 0) }));
+      scored.sort((a, b) => b.score - a.score);
+      return scored.slice(0, numSentences).map(x => x.s.trim()).join('. ') + '.';
+    };
+    const fallbackAnalyze = (text) => {
+      const words = text.toLowerCase().split(/\W+/).filter(w => w.length > 4);
+      const freq = {};
+      words.forEach(w => freq[w] = (freq[w] || 0) + 1);
+      const top = Object.entries(freq).sort((a,b) => b[1] - a[1]).slice(0, 10).map(e => e[0]).join(', ');
+      return `Main topics: ${top}\nSentiment: Neutral`;
+    };
+    const dict = {
+      'hello':{'es':'hola','fr':'bonjour','de':'hallo','it':'ciao','pt':'olá','ru':'привет','zh':'你好','ja':'こんにちは','ko':'안녕하세요','ar':'مرحبا','hi':'नमस्ते'},
+      'world':{'es':'mundo','fr':'monde','de':'Welt','it':'mondo','pt':'mundo','ru':'мир','zh':'世界','ja':'世界','ko':'세계','ar':'عالم','hi':'दुनिया'},
+      'thank you':{'es':'gracias','fr':'merci','de':'danke','it':'grazie','pt':'obrigado','ru':'спасибо','zh':'谢谢','ja':'ありがとう','ko':'감사합니다','ar':'شكرا','hi':'धन्यवाद'},
+      'good':{'es':'bueno','fr':'bon','de':'gut','it':'buono','pt':'bom','ru':'хорошо','zh':'好','ja':'良い','ko':'좋은','ar':'جيد','hi':'अच्छा'},
+      'bad':{'es':'malo','fr':'mauvais','de':'schlecht','it':'cattivo','pt':'mau','ru':'плохой','zh':'坏','ja':'悪い','ko':'나쁜','ar':'سيء','hi':'बुरा'},
+      'free':{'es':'gratis','fr':'gratuit','de':'kostenlos','it':'gratuito','pt':'grátis','ru':'бесплатный','zh':'免费','ja':'無料','ko':'무료','ar':'مجاني','hi':'मुफ्त'},
+      'pdf':{'es':'pdf','fr':'pdf','de':'pdf','it':'pdf','pt':'pdf','ru':'pdf','zh':'pdf','ja':'pdf','ko':'pdf','ar':'pdf','hi':'पीडीएफ'},
+      'watermark':{'es':'marca de agua','fr':'filigrane','de':'Wasserzeichen','it':'filigrana','pt':'marca d\'água','ru':'водяной знак','zh':'水印','ja':'透かし','ko':'워터마크','ar':'علامة مائية','hi':'वॉटरमार्क'},
+      'confidential':{'es':'confidencial','fr':'confidentiel','de':'vertraulich','it':'riservato','pt':'confidencial','ru':'конфиденциально','zh':'机密','ja':'機密','ko':'기밀','ar':'سري','hi':'गोपनीय'},
+      'document':{'es':'documento','fr':'document','de':'Dokument','it':'documento','pt':'documento','ru':'документ','zh':'文档','ja':'文書','ko':'문서','ar':'وثيقة','hi':'दस्तावेज़'},
+      'summary':{'es':'resumen','fr':'résumé','de':'Zusammenfassung','it':'riassunto','pt':'resumo','ru':'резюме','zh':'摘要','ja':'要約','ko':'요약','ar':'ملخص','hi':'सारांश'},
+      'translate':{'es':'traducir','fr':'traduire','de':'übersetzen','it':'tradurre','pt':'traduzir','ru':'переводить','zh':'翻译','ja':'翻訳','ko':'번역','ar':'ترجمة','hi':'अनुवाद'},
+      'analysis':{'es':'análisis','fr':'analyse','de':'Analyse','it':'analisi','pt':'análise','ru':'анализ','zh':'分析','ja':'分析','ko':'분석','ar':'تحليل','hi':'विश्लेषण'},
+      'page':{'es':'página','fr':'page','de':'Seite','it':'pagina','pt':'página','ru':'страница','zh':'页','ja':'ページ','ko':'페이지','ar':'صفحة','hi':'पृष्ठ'},
+      'file':{'es':'archivo','fr':'fichier','de':'Datei','it':'file','pt':'arquivo','ru':'файл','zh':'文件','ja':'ファイル','ko':'파일','ar':'ملف','hi':'फ़ाइल'},
+      'download':{'es':'descargar','fr':'télécharger','de':'herunterladen','it':'scaricare','pt':'baixar','ru':'скачать','zh':'下载','ja':'ダウンロード','ko':'다운로드','ar':'تحميل','hi':'डाउनलोड'},
+      'upload':{'es':'subir','fr':'téléverser','de':'hochladen','it':'caricare','pt':'enviar','ru':'загрузить','zh':'上传','ja':'アップロード','ko':'업로드','ar':'رفع','hi':'अपलोड'},
+      'merge':{'es':'fusionar','fr':'fusionner','de':'zusammenführen','it':'unire','pt':'mesclar','ru':'объединить','zh':'合并','ja':'マージ','ko':'병합','ar':'دمج','hi':'मर्ज'},
+      'split':{'es':'dividir','fr':'diviser','de':'teilen','it':'dividere','pt':'dividir','ru':'разделить','zh':'拆分','ja':'分割','ko':'분할','ar':'تقسيم','hi':'विभाजित'},
+      'compress':{'es':'comprimir','fr':'compresser','de':'komprimieren','it':'comprimere','pt':'comprimir','ru':'сжать','zh':'压缩','ja':'圧縮','ko':'압축','ar':'ضغط','hi':'संपीड़ित'},
+      'rotate':{'es':'girar','fr':'tourner','de':'drehen','it':'ruotare','pt':'girar','ru':'повернуть','zh':'旋转','ja':'回転','ko':'회전','ar':'تدوير','hi':'घुमाएं'},
+      'delete':{'es':'eliminar','fr':'supprimer','de':'löschen','it':'eliminare','pt':'excluir','ru':'удалить','zh':'删除','ja':'削除','ko':'삭제','ar':'حذف','hi':'हटाएं'},
+      'extract':{'es':'extraer','fr':'extraire','de':'extrahieren','it':'estrarre','pt':'extrair','ru':'извлечь','zh':'提取','ja':'抽出','ko':'추출','ar':'استخراج','hi':'निकालें'},
+      'reorder':{'es':'reordenar','fr':'réorganiser','de':'neu ordnen','it':'riordinare','pt':'reordenar','ru':'переупорядочить','zh':'重新排序','ja':'並べ替え','ko':'재정렬','ar':'إعادة ترتيب','hi':'पुनः क्रमित करें'},
+      'number':{'es':'número','fr':'nombre','de':'Nummer','it':'numero','pt':'número','ru':'номер','zh':'数字','ja':'番号','ko':'번호','ar':'رقم','hi':'संख्या'},
+      'header':{'es':'encabezado','fr':'en-tête','de':'Kopfzeile','it':'intestazione','pt':'cabeçalho','ru':'заголовок','zh':'页眉','ja':'ヘッダー','ko':'헤더','ar':'رأس','hi':'शीर्षक'},
+      'footer':{'es':'pie de página','fr':'pied de page','de':'Fußzeile','it':'piè di pagina','pt':'rodapé','ru':'нижний колонтитул','zh':'页脚','ja':'フッター','ko':'푸터','ar':'تذييل','hi':'पाद'},
+      'redact':{'es':'redactar','fr':'expurger','de':'schwärzen','it':'oscurare','pt':'redigir','ru':'редактировать','zh':'编辑','ja':'墨消し','ko':'검열','ar':'تنقيح','hi':'संपादित करें'},
+      'annotate':{'es':'anotar','fr':'annoter','de':'kommentieren','it':'annotare','pt':'anotar','ru':'аннотировать','zh':'注释','ja':'注釈','ko':'주석','ar':'تعليق','hi':'टिप्पणी करें'},
+      'crop':{'es':'recortar','fr':'rogner','de':'zuschneiden','it':'ritagliare','pt':'cortar','ru':'обрезать','zh':'裁剪','ja':'トリミング','ko':'자르기','ar':'قص','hi':'काटें'},
+      'protect':{'es':'proteger','fr':'protéger','de':'schützen','it':'proteggere','pt':'proteger','ru':'защитить','zh':'保护','ja':'保護','ko':'보호','ar':'حماية','hi':'रक्षा करें'},
+      'unlock':{'es':'desbloquear','fr':'déverrouiller','de':'entsperren','it':'sbloccare','pt':'desbloquear','ru':'разблокировать','zh':'解锁','ja':'ロック解除','ko':'잠금 해제','ar':'فتح','hi':'अनलॉक करें'},
+      'sign':{'es':'firmar','fr':'signer','de':'unterschreiben','it':'firmare','pt':'assinar','ru':'подписать','zh':'签名','ja':'署名','ko':'서명','ar':'توقيع','hi':'हस्ताक्षर करें'},
+      'flatten':{'es':'aplanar','fr':'aplatir','de':'abflachen','it':'appiattire','pt':'achatar','ru':'сплющить','zh':'扁平化','ja':'フラット化','ko':'평탄화','ar':'تسطيح','hi':'समतल करें'},
+      'metadata':{'es':'metadatos','fr':'métadonnées','de':'Metadaten','it':'metadati','pt':'metadados','ru':'метаданные','zh':'元数据','ja':'メタデータ','ko':'메타데이터','ar':'بيانات وصفية','hi':'मेटाडेटा'},
+      'optimize':{'es':'optimizar','fr':'optimiser','de':'optimieren','it':'ottimizzare','pt':'otimizar','ru':'оптимизировать','zh':'优化','ja':'最適化','ko':'최적화','ar':'تحسين','hi':'अनुकूलित करें'},
+      'repair':{'es':'reparar','fr':'réparer','de':'reparieren','it':'riparare','pt':'reparar','ru':'ремонтировать','zh':'修复','ja':'修復','ko':'복구','ar':'إصلاح','hi':'मरम्मत करें'},
+      'batch':{'es':'lote','fr':'lot','de':'Stapel','it':'lotto','pt':'lote','ru':'пакет','zh':'批量','ja':'バッチ','ko':'일괄','ar':'دفعة','hi':'बैच'},
+      'convert':{'es':'convertir','fr':'convertir','de':'konvertieren','it':'convertire','pt':'converter','ru':'конвертировать','zh':'转换','ja':'変換','ko':'변환','ar':'تحويل','hi':'बदलें'},
+      'word':{'es':'palabra','fr':'mot','de':'Wort','it':'parola','pt':'palavra','ru':'слово','zh':'单词','ja':'単語','ko':'단어','ar':'كلمة','hi':'शब्द'},
+      'excel':{'es':'Excel','fr':'Excel','de':'Excel','it':'Excel','pt':'Excel','ru':'Excel','zh':'Excel','ja':'Excel','ko':'Excel','ar':'Excel','hi':'एक्सेल'},
+      'powerpoint':{'es':'PowerPoint','fr':'PowerPoint','de':'PowerPoint','it':'PowerPoint','pt':'PowerPoint','ru':'PowerPoint','zh':'PowerPoint','ja':'PowerPoint','ko':'PowerPoint','ar':'PowerPoint','hi':'पावरपॉइंट'},
+      'jpg':{'es':'jpg','fr':'jpg','de':'jpg','it':'jpg','pt':'jpg','ru':'jpg','zh':'jpg','ja':'jpg','ko':'jpg','ar':'jpg','hi':'जेपीजी'},
+      'png':{'es':'png','fr':'png','de':'png','it':'png','pt':'png','ru':'png','zh':'png','ja':'png','ko':'png','ar':'png','hi':'पीएनजी'},
+      'text':{'es':'texto','fr':'texte','de':'Text','it':'testo','pt':'texto','ru':'текст','zh':'文本','ja':'テキスト','ko':'텍스트','ar':'نص','hi':'पाठ'},
+      'image':{'es':'imagen','fr':'image','de':'Bild','it':'immagine','pt':'imagem','ru':'изображение','zh':'图像','ja':'画像','ko':'이미지','ar':'صورة','hi':'इमेज'},
+      'html':{'es':'html','fr':'html','de':'html','it':'html','pt':'html','ru':'html','zh':'html','ja':'html','ko':'html','ar':'html','hi':'एचटीएमएल'},
+      'size':{'es':'tamaño','fr':'taille','de':'Größe','it':'dimensione','pt':'tamanho','ru':'размер','zh':'大小','ja':'サイズ','ko':'크기','ar':'حجم','hi':'आकार'},
+      'quality':{'es':'calidad','fr':'qualité','de':'Qualität','it':'qualità','pt':'qualidade','ru':'качество','zh':'质量','ja':'品質','ko':'품질','ar':'جودة','hi':'गुणवत्ता'},
+      'format':{'es':'formato','fr':'format','de':'Format','it':'formato','pt':'formato','ru':'формат','zh':'格式','ja':'フォーマット','ko':'형식','ar':'تنسيق','hi':'प्रारूप'},
+      'layout':{'es':'diseño','fr':'mise en page','de':'Layout','it':'layout','pt':'layout','ru':'макет','zh':'布局','ja':'レイアウト','ko':'레이아웃','ar':'تخطيط','hi':'लेआउट'},
+      'margin':{'es':'margen','fr':'marge','de':'Rand','it':'margine','pt':'margem','ru':'поле','zh':'边距','ja':'余白','ko':'여백','ar':'هامش','hi':'हाशिया'},
+      'dpi':{'es':'ppp','fr':'ppp','de':'dpi','it':'dpi','pt':'dpi','ru':'dpi','zh':'dpi','ja':'dpi','ko':'dpi','ar':'نقطة في البوصة','hi':'डीपीआई'},
+      'print':{'es':'imprimir','fr':'imprimer','de':'drucken','it':'stampare','pt':'imprimir','ru':'печатать','zh':'打印','ja':'印刷','ko':'인쇄','ar':'طباعة','hi':'प्रिंट करें'},
+      'web':{'es':'web','fr':'web','de':'Web','it':'web','pt':'web','ru':'веб','zh':'网络','ja':'ウェブ','ko':'웹','ar':'ويب','hi':'वेब'},
+      'email':{'es':'correo electrónico','fr':'email','de':'E-Mail','it':'email','pt':'e-mail','ru':'электронная почта','zh':'电子邮件','ja':'メール','ko':'이메일','ar':'بريد إلكتروني','hi':'ईमेल'},
+      'archive':{'es':'archivo','fr':'archive','de':'Archiv','it':'archivio','pt':'arquivo','ru':'архив','zh':'存档','ja':'アーカイブ','ko':'아카이브','ar':'أرشيف','hi':'संग्रह'},
+      'details':{'es':'detalles','fr':'détails','de':'Details','it':'dettagli','pt':'detalhes','ru':'подробности','zh':'详细信息','ja':'詳細','ko':'세부사항','ar':'تفاصيل','hi':'विवरण'},
+      'change':{'es':'cambiar','fr':'changer','de':'ändern','it':'cambiare','pt':'mudar','ru':'изменить','zh':'改变','ja':'変更','ko':'변경','ar':'تغيير','hi':'बदलें'},
+      'version':{'es':'versión','fr':'version','de':'Version','it':'versione','pt':'versão','ru':'версия','zh':'版本','ja':'バージョン','ko':'버전','ar':'إصدار','hi':'संस्करण'},
+      'basic':{'es':'básico','fr':'basique','de':'grundlegend','it':'base','pt':'básico','ru':'базовый','zh':'基本','ja':'基本','ko':'기본','ar':'أساسي','hi':'बुनियादी'},
+      'standard':{'es':'estándar','fr':'standard','de':'Standard','it':'standard','pt':'padrão','ru':'стандартный','zh':'标准','ja':'標準','ko':'표준','ar':'قياسي','hi':'मानक'},
+      'high':{'es':'alto','fr':'haut','de':'hoch','it':'alto','pt':'alto','ru':'высокий','zh':'高','ja':'高い','ko':'높은','ar':'عالي','hi':'उच्च'},
+      'low':{'es':'bajo','fr':'bas','de':'niedrig','it':'basso','pt':'baixo','ru':'низкий','zh':'低','ja':'低い','ko':'낮은','ar':'منخفض','hi':'कम'},
+      'medium':{'es':'medio','fr':'moyen','de':'mittel','it':'medio','pt':'médio','ru':'средний','zh':'中','ja':'中','ko':'중간','ar':'متوسط','hi':'मध्यम'},
+      'color':{'es':'color','fr':'couleur','de':'Farbe','it':'colore','pt':'cor','ru':'цвет','zh':'颜色','ja':'色','ko':'색상','ar':'لون','hi':'रंग'},
+      'black':{'es':'negro','fr':'noir','de':'schwarz','it':'nero','pt':'preto','ru':'черный','zh':'黑色','ja':'黒','ko':'검정','ar':'أسود','hi':'काला'},
+      'white':{'es':'blanco','fr':'blanc','de':'weiß','it':'bianco','pt':'branco','ru':'белый','zh':'白色','ja':'白','ko':'흰색','ar':'أبيض','hi':'सफेद'},
+      'red':{'es':'rojo','fr':'rouge','de':'rot','it':'rosso','pt':'vermelho','ru':'красный','zh':'红色','ja':'赤','ko':'빨강','ar':'أحمر','hi':'लाल'},
+      'green':{'es':'verde','fr':'vert','de':'grün','it':'verde','pt':'verde','ru':'зеленый','zh':'绿色','ja':'緑','ko':'초록','ar':'أخضر','hi':'हरा'},
+      'blue':{'es':'azul','fr':'bleu','de':'blau','it':'blu','pt':'azul','ru':'синий','zh':'蓝色','ja':'青','ko':'파랑','ar':'أزرق','hi':'नीला'},
+      'gray':{'es':'gris','fr':'gris','de':'grau','it':'grigio','pt':'cinza','ru':'серый','zh':'灰色','ja':'灰色','ko':'회색','ar':'رمادي','hi':'ग्रे'},
+      'opacity':{'es':'opacidad','fr':'opacité','de':'Deckkraft','it':'opacità','pt':'opacidade','ru':'непрозрачность','zh':'不透明度','ja':'不透明度','ko':'불투명도','ar':'عتامة','hi':'अपारदर्शिता'},
+      'position':{'es':'posición','fr':'position','de':'Position','it':'posizione','pt':'posição','ru':'позиция','zh':'位置','ja':'位置','ko':'위치','ar':'موضع','hi':'स्थिति'},
+      'center':{'es':'centro','fr':'centre','de':'Mitte','it':'centro','pt':'centro','ru':'центр','zh':'中心','ja':'中央','ko':'중앙','ar':'مركز','hi':'केंद्र'},
+      'top':{'es':'superior','fr':'haut','de':'oben','it':'superiore','pt':'superior','ru':'верхний','zh':'顶部','ja':'上','ko':'상단','ar':'أعلى','hi':'शीर्ष'},
+      'bottom':{'es':'inferior','fr':'bas','de':'unten','it':'inferiore','pt':'inferior','ru':'нижний','zh':'底部','ja':'下','ko':'하단','ar':'أسفل','hi':'तल'},
+      'left':{'es':'izquierda','fr':'gauche','de':'links','it':'sinistra','pt':'esquerda','ru':'левый','zh':'左','ja':'左','ko':'왼쪽','ar':'يسار','hi':'बाएं'},
+      'right':{'es':'derecha','fr':'droite','de':'rechts','it':'destra','pt':'direita','ru':'правый','zh':'右','ja':'右','ko':'오른쪽','ar':'يمين','hi':'दाएं'},
+      'diagonal':{'es':'diagonal','fr':'diagonale','de':'diagonal','it':'diagonale','pt':'diagonal','ru':'диагональный','zh':'对角线','ja':'斜め','ko':'대각선','ar':'قطري','hi':'विकर्ण'},
+      'small':{'es':'pequeño','fr':'petit','de':'klein','it':'piccolo','pt':'pequeno','ru':'маленький','zh':'小','ja':'小','ko':'작은','ar':'صغير','hi':'छोटा'},
+      'large':{'es':'grande','fr':'grand','de':'groß','it':'grande','pt':'grande','ru':'большой','zh':'大','ja':'大','ko':'큰','ar':'كبير','hi':'बड़ा'},
+      'huge':{'es':'enorme','fr':'énorme','de':'riesig','it':'enorme','pt':'enorme','ru':'огромный','zh':'巨大','ja':'巨大','ko':'거대한','ar':'ضخم','hi':'विशाल'},
+      'font':{'es':'fuente','fr':'police','de':'Schriftart','it':'carattere','pt':'fonte','ru':'шрифт','zh':'字体','ja':'フォント','ko':'글꼴','ar':'خط','hi':'फ़ॉन्ट'},
+      'style':{'es':'estilo','fr':'style','de':'Stil','it':'stile','pt':'estilo','ru':'стиль','zh':'样式','ja':'スタイル','ko':'스타일','ar':'أسلوب','hi':'शैली'},
+      'bold':{'es':'negrita','fr':'gras','de':'fett','it':'grassetto','pt':'negrito','ru':'жирный','zh':'粗体','ja':'太字','ko':'굵게','ar':'غامق','hi':'मोटा'},
+      'italic':{'es':'cursiva','fr':'italique','de':'kursiv','it':'corsivo','pt':'itálico','ru':'курсив','zh':'斜体','ja':'斜体','ko':'기울임꼴','ar':'مائل','hi':'तिरछा'},
+      'underline':{'es':'subrayado','fr':'souligné','de':'unterstrichen','it':'sottolineato','pt':'sublinhado','ru':'подчеркнутый','zh':'下划线','ja':'下線','ko':'밑줄','ar':'مسطر','hi':'रेखांकित'},
+      'strikethrough':{'es':'tachado','fr':'barré','de':'durchgestrichen','it':'barrato','pt':'tachado','ru':'зачеркнутый','zh':'删除线','ja':'取り消し線','ko':'취소선','ar':'مشطوب','hi':'काटा हुआ'},
+    };
+    const instantTranslate = (text, from = 'en', to = 'es') => {
+      if (from === to) return text;
+      const words = text.split(/(\s+|\b)/);
+      return words.map(w => {
+        const lower = w.toLowerCase().replace(/[.,!?;:]/g, '');
+        const translation = dict[lower] && dict[lower][to] ? dict[lower][to] : null;
+        return translation ? w.replace(lower, translation) : w;
+      }).join('');
+    };
+    const langToCode = (name) => {
+      const m = { 'English': 'en', 'Spanish': 'es', 'French': 'fr', 'German': 'de', 'Italian': 'it', 'Portuguese': 'pt', 'Russian': 'ru', 'Chinese': 'zh', 'Chinese (Simplified)': 'zh', 'Japanese': 'ja', 'Korean': 'ko', 'Arabic': 'ar', 'Hindi': 'hi', 'Auto-detect': 'en' };
+      return m[name] || 'en';
+    };
+
+    // AI Processors – using the worker for inference
+    const workerInference = (messages, max_tokens = 400) => {
+      return new Promise((resolve, reject) => {
+        const worker = window.aiEngineWorker;
+        if (!worker) return reject(new Error('AI not activated'));
+        const handler = (e) => {
+          if (e.data.type === 'RESULT') {
+            worker.removeEventListener('message', handler);
+            resolve(e.data.result);
+          } else if (e.data.type === 'ERROR') {
+            worker.removeEventListener('message', handler);
+            reject(new Error(e.data.error));
+          }
+        };
+        worker.addEventListener('message', handler);
+        worker.postMessage({ type: 'INFER', payload: { messages, max_tokens } });
+      });
+    };
+
+    const chatWithPdf = async (files, opts, setProg) => {
+      setProg(5);
+      const question = opts.question?.trim();
+      if (!question) throw new Error("Please enter a question.");
+      const txt = await extractText(files[0], (p) => setProg(5 + Math.floor(p * 0.3)));
+      if (!txt) throw new Error("No text found in this PDF.");
+      setProg(35);
+      const chunks = [];
+      const sentences = txt.match(/[^.!?\n]+[.!?\n]*/g) || [txt];
+      let currentChunk = '';
+      for (const s of sentences) {
+        if ((currentChunk + s).length > 500 && currentChunk.length > 0) {
+          chunks.push(currentChunk.trim());
+          currentChunk = s;
+        } else currentChunk += ' ' + s;
+      }
+      if (currentChunk.trim()) chunks.push(currentChunk.trim());
+      setProg(40);
+
+      if (window.aiEngineWorker) {
+        try {
+          const pipe = await window.Transformers.pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+          const chunkEmbeddings = await Promise.all(chunks.map(c => pipe(c, { pooling: 'mean', normalize: true })));
+          const questionEmbedding = await pipe(question, { pooling: 'mean', normalize: true });
+          const similarities = chunkEmbeddings.map((emb, i) => ({
+            idx: i,
+            sim: emb.data.reduce((sum, val, j) => sum + val * questionEmbedding.data[j], 0)
+          }));
+          similarities.sort((a,b) => b.sim - a.sim);
+          const topChunks = similarities.slice(0, 3).map(s => chunks[s.idx]);
+          const prompt = `You are a helpful assistant. Answer the following question using ONLY the provided document excerpts. If the answer is not in the text, say so.\n\nDocument excerpts:\n${topChunks.join('\n---\n')}\n\nQuestion: ${question}\nAnswer:`;
+          const reply = await workerInference([
+            { role: 'system', content: 'You answer questions based on provided document snippets.' },
+            { role: 'user', content: prompt }
+          ]);
+          setProg(100);
+          return [{ type: "text", content: reply, name: "answer.txt" }];
+        } catch(e) { console.warn('Neural chat failed, falling back', e); }
+      }
+
+      const keywords = question.toLowerCase().split(/\W+/).filter(w => w.length > 2);
+      const scored = chunks.map(chunk => ({ chunk, score: keywords.reduce((acc, kw) => acc + (chunk.toLowerCase().includes(kw) ? 1 : 0), 0) }));
+      scored.sort((a,b) => b.score - a.score);
+      const best = scored.slice(0, 2).map(s => s.chunk).join('\n\n');
+      setProg(100);
+      return [{ type: "text", content: best || "No relevant information found.", name: "answer.txt", warning: "AI engine unavailable." }];
+    };
+
+    const aiProcessors = {
+      "ai-sum": async (files, opts, setProg) => {
+        setProg(5);
+        const txt = await extractText(files[0], (p) => setProg(5 + Math.floor(p * 0.5)));
+        setProg(55);
+        if (window.aiEngineWorker) {
+          try {
+            const reply = await workerInference([{ role: 'user', content: `Summarize the following document concisely (${opts.len}):\n\n${txt.slice(0, 12000)}` }], 300);
+            setProg(100);
+            return [{ type: "text", content: reply, name: "summary.txt" }];
+          } catch(e){}
+        }
+        const len = opts.len === 'Brief' ? 2 : (opts.len === 'Detailed' ? 5 : 3);
+        const summary = extractiveSummary(txt, len);
+        setProg(100);
+        return [{ type: "text", content: summary, name: "summary.txt", warning: "AI offline – extractive summary." }];
+      },
+      "ai-trans": async (files, opts, setProg) => {
+        setProg(5);
+        const txt = await extractText(files[0], (p) => setProg(5 + Math.floor(p * 0.5)));
+        setProg(55);
+        if (window.aiEngineWorker) {
+          try {
+            const reply = await workerInference([{ role: 'user', content: `Translate the following text from ${opts.from} to ${opts.to}:\n\n${txt.slice(0, 10000)}` }], 800);
+            setProg(100);
+            return [{ type: "text", content: reply, name: "translated.txt" }];
+          } catch(e){}
+        }
+        const fromCode = opts.from === 'Auto-detect' ? 'en' : langToCode(opts.from);
+        const toCode = langToCode(opts.to);
+        const result = instantTranslate(txt, fromCode, toCode);
+        setProg(100);
+        return [{ type: "text", content: result, name: "translated.txt", warning: "Using basic dictionary translation." }];
+      },
+      "ai-analyze": async (files, opts, setProg) => {
+        setProg(5);
+        const txt = await extractText(files[0], (p) => setProg(5 + Math.floor(p * 0.5)));
+        setProg(55);
+        if (window.aiEngineWorker) {
+          try {
+            const reply = await workerInference([{ role: 'user', content: `Analyze this document. Provide key topics, sentiment, and important entities.\n\n${txt.slice(0, 10000)}` }], 400);
+            setProg(100);
+            return [{ type: "text", content: reply, name: "insights.txt" }];
+          } catch(e){}
+        }
+        const analysis = fallbackAnalyze(txt);
+        setProg(100);
+        return [{ type: "text", content: analysis, name: "insights.txt", warning: "Using basic keyword analysis." }];
+      },
+      "ai-chat": chatWithPdf,
+    };
+
+    // ---- UI Components ----
+    const ReorderModal = ({ file, onSave, onCancel }) => {
+      const [pages, setPages] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [dragIdx, setDragIdx] = useState(null);
+      useEffect(() => {
+        (async () => {
+          const pdfjs = window.pdfjsLib;
+          const buf = await readBuf(file);
+          const pdf = await pdfjs.getDocument({ data: buf }).promise;
+          const n = pdf.numPages;
+          const thumbs = [];
+          for (let i = 1; i <= n; i++) {
+            const page = await pdf.getPage(i);
+            const vp = page.getViewport({ scale: 0.4 });
+            const canvas = document.createElement('canvas'); canvas.width = vp.width; canvas.height = vp.height;
+            await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+            thumbs.push({ idx: i-1, dataUrl: canvas.toDataURL() });
+          }
+          setPages(thumbs); setLoading(false);
+        })();
+      }, [file]);
+      const movePage = (from, to) => { const arr = [...pages]; const [item] = arr.splice(from,1); arr.splice(to,0,item); setPages(arr); };
+      const handleSave = async () => {
+        const { PDFDocument } = window.PDFLib;
+        const srcDoc = await PDFDocument.load(await readBuf(file));
+        const newDoc = await PDFDocument.create();
+        for (const { idx } of pages) { const [copied] = await newDoc.copyPages(srcDoc, [idx]); newDoc.addPage(copied); }
+        const b = await newDoc.save();
+        onSave(new Blob([b], { type: "application/pdf" }));
+      };
+      if (loading) return React.createElement('div',{style:{textAlign:"center",padding:20}},"Loading pages…");
+      return React.createElement('div',{style:{position:"fixed",inset:0,background:"#000000aa",display:"flex",alignItems:"center",justifyContent:"center",zIndex:200}},
+        React.createElement('div',{style:{background:T.bgCard,borderRadius:16,padding:24,width:"90%",maxWidth:800,maxHeight:"80vh",overflowY:"auto"}},
+          React.createElement('h2',{style:{color:T.text}},"Reorder Pages"),
+          React.createElement('p',{style:{color:T.textSub,marginBottom:16}},"Drag thumbnails to reorder, then click Save."),
+          React.createElement('div',{style:{display:"flex",flexWrap:"wrap",gap:12}},
+            pages.map((p,i)=>React.createElement('div',{key:i,draggable:true,
+              onDragStart:()=>setDragIdx(i), onDragOver:e=>e.preventDefault(),
+              onDrop:()=>{if(dragIdx!==null&&dragIdx!==i)movePage(dragIdx,i);setDragIdx(null);},
+              style:{width:120,border:`2px solid ${i===dragIdx?T.primary:T.border}`,borderRadius:8,overflow:"hidden",cursor:"grab",background:T.bgInput,textAlign:"center"}},
+              React.createElement('img',{src:p.dataUrl,style:{width:"100%"},alt:`Page ${i+1}`}),
+              React.createElement('div',{style:{padding:"4px 0",fontSize:11,color:T.textSub}},i+1)))
+          ),
+          React.createElement('div',{style:{marginTop:20,display:"flex",gap:12,justifyContent:"flex-end"}},
+            React.createElement('button',{onClick:onCancel,style:{background:"transparent",border:`1px solid ${T.border}`,borderRadius:8,padding:"8px 20px",color:T.textSub,cursor:"pointer"}},"Cancel"),
+            React.createElement('button',{onClick:handleSave,style:{background:T.grad,border:"none",borderRadius:8,padding:"8px 20px",color:"white",cursor:"pointer",fontWeight:600}},"Save Order")
+          )
+        )
+      );
+    };
+
+    const Modal = ({ title, children, onClose }) => (
+      React.createElement('div',{style:{position:"fixed",inset:0,background:"#000000cc",display:"flex",alignItems:"center",justifyContent:"center",zIndex:300}},
+        React.createElement('div',{style:{background:T.bgCard,borderRadius:16,padding:24,width:"90%",maxWidth:600,maxHeight:"80vh",overflowY:"auto",position:"relative"}},
+          React.createElement('button',{onClick:onClose,style:{position:"absolute",top:12,right:16,background:"none",border:"none",color:T.textSub,cursor:"pointer",fontSize:18}},"✕"),
+          React.createElement('h2',{style:{color:T.text,marginBottom:16}},title), children
+        )
+      )
+    );
+
+    const Badge = ({ children, color=T.primary }) => React.createElement('span',{style:{background:color+"22",color,border:`1px solid ${color}44`,borderRadius:4,padding:"1px 7px",fontSize:10,fontWeight:600,letterSpacing:"0.4px"}},children);
+    const Btn = ({ children, onClick, disabled, style={}, variant="primary", size="md" }) => {
+      const [h,sh] = useState(false);
+      const pad = size==="sm"?"6px 14px":size==="lg"?"12px 28px":"10px 22px";
+      const bg = variant==="primary"?(h?T.gradHover:T.grad):variant==="ghost"?(h?"#1A2540":"transparent"):"";
+      const border = variant==="outline"?`1px solid ${h?T.borderHover:T.border}`:"none";
+      return React.createElement('button',{onClick,disabled,onMouseEnter:()=>sh(true),onMouseLeave:()=>sh(false),
+        style:{background:bg,border,borderRadius:8,padding:pad,color:T.text,cursor:disabled?"not-allowed":"pointer",opacity:disabled?0.5:1,fontWeight:600,fontSize:14,display:"inline-flex",alignItems:"center",gap:6,transition:"all 0.15s ease",...style}},children);
+    };
+    const Input = ({ value, onChange, placeholder, type="text", style={} }) => React.createElement('input',{type,value,onChange:e=>onChange(e.target.value),placeholder,
+      style:{background:T.bgInput,border:`1px solid ${T.border}`,borderRadius:8,padding:"9px 14px",color:T.text,fontSize:14,outline:"none",width:"100%",boxSizing:"border-box",...style}});
+    const Select = ({ value, onChange, options }) => React.createElement('select',{value,onChange:e=>onChange(e.target.value),
+      style:{background:T.bgInput,border:`1px solid ${T.border}`,borderRadius:8,padding:"9px 14px",color:T.text,fontSize:14,outline:"none",width:"100%",cursor:"pointer"}},options.map(o=>React.createElement('option',{key:o,value:o},o)));
+    const Toggle = ({ value, onChange, label }) => React.createElement('div',{style:{display:"flex",alignItems:"center",gap:10,cursor:"pointer"},onClick:()=>onChange(!value)},
+      React.createElement('div',{style:{width:40,height:22,borderRadius:11,background:value?T.primary:T.border,position:"relative",transition:"background 0.2s",flexShrink:0}},
+        React.createElement('div',{style:{position:"absolute",top:3,left:value?19:3,width:16,height:16,borderRadius:"50%",background:"white",transition:"left 0.2s"}})),
+      React.createElement('span',{style:{color:T.textSub,fontSize:13}},label));
+    const ProgBar = ({ pct, color=T.primary }) => React.createElement('div',{style:{background:T.border,borderRadius:6,overflow:"hidden",height:7}},
+      React.createElement('div',{style:{background:`linear-gradient(90deg,${color},${T.accent})`,height:"100%",width:`${pct}%`,transition:"width 0.3s ease",borderRadius:6}}));
+    const ToolCard = ({ tool, onClick }) => {
+      const [h,sh] = useState(false);
+      const cat = CATS.find(c=>c.id===tool.cat);
+      return React.createElement('div',{onClick:()=>onClick(tool),onMouseEnter:()=>sh(true),onMouseLeave:()=>sh(false),
+        style:{background:h?(tool.cat==="ai"?"#120E1E":T.bgCardHover):T.bgCard,border:`1px solid ${h?cat?.color||T.primary:T.border}`,borderRadius:12,padding:16,cursor:"pointer",transition:"all 0.18s ease",position:"relative",transform:h?"translateY(-3px)":"none",boxShadow:h?`0 8px 24px ${cat?.color}28`:"none"}},
+        tool.hot&&React.createElement('div',{style:{position:"absolute",top:8,right:8,background:T.grad,borderRadius:4,padding:"1px 7px",fontSize:9,fontWeight:700,color:"white"}},"HOT"),
+        tool.cat==="ai"&&React.createElement('div',{style:{position:"absolute",inset:0,borderRadius:12,background:`radial-gradient(circle at 50% 0%,${T.ai}10 0%,transparent 70%)`,pointerEvents:"none"}}),
+        React.createElement('div',{style:{fontSize:28,marginBottom:10,lineHeight:1}},tool.emoji),
+        React.createElement('div',{style:{fontWeight:600,color:T.text,fontSize:13,marginBottom:5}},tool.name),
+        React.createElement('div',{style:{color:T.textSub,fontSize:11,lineHeight:1.5,minHeight:32}},tool.desc),
+        React.createElement('div',{style:{marginTop:10,display:"flex",alignItems:"center",gap:3,color:cat?.color||T.primary,fontSize:11,fontWeight:500,opacity:h?1:0.7}},"Open ",React.createElement(ChevronRight,{size:12}))
+      );
+    };
+    const DropZone = ({ accepts, multi, onFiles, files }) => {
+      const [drag,setDrag] = useState(false); const ref = useRef();
+      const handle = fs => { const arr=Array.from(fs); if(!multi) onFiles([arr[0]]); else onFiles(arr); };
+      return React.createElement('div',{
+        onDragOver:e=>{e.preventDefault();setDrag(true)},onDragLeave:()=>setDrag(false),onDrop:e=>{e.preventDefault();setDrag(false);handle(e.dataTransfer.files);},
+        onClick:()=>ref.current.click(),
+        style:{border:`2px dashed ${drag?T.primary:files?.length?T.success:T.border}`,borderRadius:14,padding:"32px 20px",textAlign:"center",cursor:"pointer",transition:"all 0.2s",background:drag?`${T.primary}08`:files?.length?`${T.success}06`:"transparent"}
+      },
+        React.createElement('input',{ref,type:"file",style:{display:"none"},accept:accepts,multiple:multi,onChange:e=>handle(e.target.files)}),
+        files&&files.length>0? React.createElement('div',null,
+          React.createElement('div',{style:{fontSize:28,marginBottom:8}},"✅"),
+          files.map((f,i)=>React.createElement('div',{key:i,style:{display:"flex",alignItems:"center",gap:8,background:T.bgCard,borderRadius:8,padding:"8px 12px",marginBottom:4}},
+            React.createElement(FileText,{size:16,color:T.primary}), React.createElement('span',{style:{color:T.text,fontSize:13,flex:1,textOverflow:"ellipsis",overflow:"hidden",whiteSpace:"nowrap"}},f.name), React.createElement('span',{style:{color:T.textMuted,fontSize:11}},fmtSize(f.size)))),
+          React.createElement('p',{style:{color:T.textSub,fontSize:12,marginTop:10}},"Click to change ",multi?"files":"file")
+        ) : React.createElement('div',null,
+          React.createElement('div',{style:{fontSize:38,marginBottom:12}},"📂"),
+          React.createElement('p',{style:{color:T.text,fontWeight:600,fontSize:15,marginBottom:6}},"Drop ",multi?"files":"your file"," here"),
+          React.createElement('p',{style:{color:T.textSub,fontSize:12,marginBottom:12}},"or click to browse"),
+          React.createElement('span',{style:{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:6,padding:"4px 12px",fontSize:11,color:T.textMuted}},accepts.replace(/\./g,"").toUpperCase().replace(/,/g," · "))
+        )
+      );
+    };
+    const OptionsPanel = ({ tool, opts, setOpts }) => {
+      if (!tool.opts||!tool.opts.length) return null;
+      return React.createElement('div',{style:{marginTop:16}},
+        React.createElement('p',{style:{color:T.textSub,fontSize:12,fontWeight:600,letterSpacing:"0.6px",textTransform:"uppercase",marginBottom:12}},"Options"),
+        React.createElement('div',{style:{display:"grid",gap:12}},
+          tool.opts.map(opt=>React.createElement('div',{key:opt.id},
+            opt.type!=="toggle"&&React.createElement('label',{style:{color:T.textSub,fontSize:12,display:"block",marginBottom:6}},opt.label),
+            opt.type==="select"? React.createElement(Select,{value:opts[opt.id]??opt.def,onChange:v=>setOpts(p=>({...p,[opt.id]:v})),options:opt.vals})
+            :opt.type==="text"? React.createElement(Input,{value:opts[opt.id]??opt.def,onChange:v=>setOpts(p=>({...p,[opt.id]:v})),placeholder:opt.label})
+            :opt.type==="password"? React.createElement(Input,{type:"password",value:opts[opt.id]??opt.def,onChange:v=>setOpts(p=>({...p,[opt.id]:v})),placeholder:opt.label})
+            :opt.type==="number"? React.createElement(Input,{type:"number",value:opts[opt.id]??opt.def,onChange:v=>setOpts(p=>({...p,[opt.id]:v})),placeholder:opt.label})
+            :opt.type==="toggle"? React.createElement(Toggle,{value:opts[opt.id]??opt.def,onChange:v=>setOpts(p=>({...p,[opt.id]:v})),label:opt.label})
+            :opt.type==="slider"? React.createElement('div',null,
+                React.createElement('div',{style:{display:"flex",justifyContent:"space-between",marginBottom:4}},
+                  React.createElement('span',{style:{color:T.textSub,fontSize:12}},opt.label),
+                  React.createElement('span',{style:{color:T.text,fontSize:12,fontWeight:600}},`${opts[opt.id]??opt.def}%`)),
+                React.createElement('input',{type:"range",min:opt.min,max:opt.max,value:opts[opt.id]??opt.def,
+                  onChange:e=>setOpts(p=>({...p,[opt.id]:parseInt(e.target.value)})),style:{width:"100%",accentColor:T.primary}}))
+            :null
+          ))
+        )
+      );
+    };
+
+    const ToolPage = ({ tool, onBack }) => {
+      const [files,setFiles] = useState([]); const [opts,setOpts] = useState({}); const [state,setState] = useState("idle");
+      const [prog,setProg] = useState(0); const [status,setStatus] = useState(""); const [results,setResults] = useState([]);
+      const [error,setError] = useState(""); const [textPreview,setTextPreview] = useState(""); const [reorderFile,setReorderFile] = useState(null);
+      const cat = CATS.find(c=>c.id===tool.cat);
+      const isAI = tool.cat==="ai"; const isReorder = tool.id==="reorder"; const isOcr = tool.id==="ocr-tesseract";
+      const initOpts = useCallback(()=>{const o={};(tool.opts||[]).forEach(opt=>{o[opt.id]=opt.def});setOpts(o);},[tool]);
+      useEffect(()=>{initOpts();setFiles([]);setState("idle");setProg(0);setResults([]);setError("");},[tool]);
+      const process = async ()=>{
+        if (!files.length) return;
+        if (files[0] && ["pdf-word","pdf-excel","word-pdf","excel-pdf","pdf-ppt"].includes(tool.id)) {
+          if (files[0].size > 25 * 1024 * 1024) {
+            setState("error");
+            setError("Local layout transformations are constrained to files under 25MB to prevent memory exhaustion. Please compress the PDF first.");
+            return;
+          }
+        }
+        if (isReorder) { setReorderFile(files[0]); return; }
+        setState("processing");setProg(0);setError("");setResults([]);
+        try{
+          let res;
+          if (isOcr) {
+            setStatus("Scanning for text…"); res = await procs["ocr-tesseract"](files, opts, setProg);
+            if (res[0]?.preview) setTextPreview(res[0].preview);
+          } else if (isAI && aiProcessors[tool.id]) {
+            if (!window.neuralAIReady) throw new Error("Please activate Smart AI first by clicking the 'Activate AI' button in the header.");
+            setStatus("Running Smart AI…"); res = await aiProcessors[tool.id](files, opts, setProg);
+            if (res[0]?.type==="text") setTextPreview(res[0].content);
+          } else if (procs[tool.id]) {
+            setStatus("Working…"); res = await procs[tool.id](files, opts, setProg);
+          } else throw new Error("Tool not available.");
+          setProg(100);setResults(res);setState("done");
+        } catch(e) {
+          setState("error");setError(e.message||"Something went wrong");
+        }
+      };
+      const related = TOOLS.filter(t=>t.cat===tool.cat&&t.id!==tool.id).slice(0,4);
+      const toolDescText = getToolDetails(tool);
+      return React.createElement('div',{style:{minHeight:"100vh",color:T.text}},
+        React.createElement('div',{style:{borderBottom:`1px solid ${T.border}`,padding:"12px 24px",display:"flex",alignItems:"center",gap:12,background:T.bgCard}},
+          React.createElement('button',{onClick:onBack,style:{background:"none",border:"none",color:T.textSub,cursor:"pointer",display:"flex",alignItems:"center",gap:4,fontSize:13,padding:0}},React.createElement(ChevronLeft,{size:16})," Back"),
+          React.createElement('span',null,tool.emoji," ",tool.name)),
+        React.createElement('div',{style:{maxWidth:760,margin:"0 auto",padding:"32px 24px"}},
+          React.createElement('div',{style:{marginBottom:28,display:"flex",alignItems:"flex-start",gap:16}},
+            React.createElement('div',{style:{fontSize:48}},tool.emoji),
+            React.createElement('div',null,
+              React.createElement('h1',{style:{margin:0,fontSize:26,fontWeight:700}},tool.name),
+              React.createElement('p',{style:{margin:"6px 0",color:T.textSub}},tool.desc),
+              React.createElement(Badge,{color:cat?.color},cat?.name))
+          ),
+          React.createElement('div',{style:{background:T.bgCard,borderRadius:16,border:`1px solid ${T.border}`,padding:24,marginBottom:24}},
+            React.createElement(DropZone,{accepts:tool.accepts,multi:tool.multi,onFiles:setFiles,files}),
+            React.createElement(OptionsPanel,{tool,opts,setOpts}),
+            state==="idle"&&React.createElement(Btn,{onClick:process,disabled:!files.length,style:{marginTop:18,width:"100%",justifyContent:"center"},size:"lg"},
+              isAI?React.createElement(React.Fragment,null,React.createElement(Sparkles,{size:16})," Run Smart AI") : React.createElement(React.Fragment,null,React.createElement(Zap,{size:16})," Start")),
+            state==="processing"&&React.createElement('div',{style:{marginTop:18}},
+              React.createElement('div',{style:{display:"flex",justifyContent:"space-between",marginBottom:8}},
+                React.createElement('span',{style:{color:T.textSub,display:"flex",gap:8}},React.createElement(Loader2,{size:14,className:"spin"}),status),
+                React.createElement('span',{style:{color:T.primary,fontWeight:600}},prog,"%")),
+              React.createElement(ProgBar,{pct:prog})),
+            state==="done"&&React.createElement('div',{style:{marginTop:18}},
+              React.createElement('div',{style:{background:T.successBg,border:`1px solid ${T.success}40`,borderRadius:10,padding:"12px 16px",display:"flex",alignItems:"center",gap:10,marginBottom:16}},React.createElement(Check,{size:18,color:T.success}),React.createElement('span',{style:{color:T.success,fontWeight:600}},"Done!")),
+              textPreview&&React.createElement('div',{style:{background:T.bgInput,borderRadius:10,padding:16,marginBottom:16,maxHeight:260,overflow:"auto"}},
+                React.createElement('pre',{style:{color:T.text,fontSize:13,whiteSpace:"pre-wrap"}},textPreview)),
+              React.createElement('div',{style:{display:"flex",flexDirection:"column",gap:8}},results.map((r,i)=>React.createElement('div',{key:i,style:{display:"flex",alignItems:"center",gap:10,background:T.bgInput,borderRadius:10,padding:"12px 16px"}},
+                React.createElement(FileCheck,{size:18,color:T.success}),React.createElement('span',{style:{flex:1}},r.name),
+                r.blob&&React.createElement(Btn,{onClick:()=>dlBlob(r.blob,r.name),size:"sm"},React.createElement(Download,{size:14})," Download"),
+                r.type==="text"&&React.createElement(Btn,{onClick:()=>{dlBlob(new Blob([r.content],{type:"text/plain"}),r.name)},size:"sm"},"Download"),
+                r.warning&&React.createElement('span',{style:{color:T.warn,fontSize:11,marginLeft:8}},r.warning)
+              ))),
+              results.length>1&&React.createElement(Btn,{variant:"outline",size:"sm",style:{marginTop:10},onClick:async()=>{const zip=new window.JSZip();results.forEach(r=>{if(r.blob)zip.file(r.name,r.blob)});const z=await zip.generateAsync({type:"blob"});dlBlob(z,"output.zip")}},"Download all as ZIP"),
+              React.createElement('div',{style:{marginTop:12,display:"flex",gap:8}},
+                React.createElement(Btn,{variant:"ghost",size:"sm",onClick:()=>{setState("idle");setProg(0);setResults([]);}},"Do it again"),
+                React.createElement(Btn,{variant:"ghost",size:"sm",onClick:()=>{setState("idle");setFiles([]);setProg(0);setResults([]);}},"New file"))
+            ),
+            state==="error"&&React.createElement('div',{style:{marginTop:18,background:T.errBg,border:`1px solid ${T.err}40`,borderRadius:10,padding:"12px 16px"}},
+              React.createElement(AlertCircle,{size:16,color:T.err}),React.createElement('p',{style:{color:T.err}},"Error: ",error),
+              React.createElement(Btn,{onClick:()=>setState("idle"),size:"sm",style:{marginTop:8}},"Try again"))
+          ),
+          React.createElement('div',{style:{marginTop:24, padding: '16px 20px', background: T.bgCard, borderRadius: 12, color: T.textSub, lineHeight: 1.6, fontSize: 14}},
+            toolDescText
+          ),
+          isReorder&&reorderFile&&React.createElement(ReorderModal,{file:reorderFile,onSave:blob=>{setResults([{blob,name:"reordered.pdf"}]);setState("done");setReorderFile(null)},onCancel:()=>setReorderFile(null)}),
+          related.length>0&&React.createElement('div',null,
+            React.createElement('p',{style:{color:T.textSub,fontSize:12,fontWeight:600,marginBottom:14}},"Related Tools"),
+            React.createElement('div',{style:{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:10}},related.map(t=>React.createElement(ToolCard,{key:t.id,tool:t,onClick:tool=>{setFiles([]);setState("idle");setProg(0);setResults([]);setError("");document.dispatchEvent(new CustomEvent("selectTool",{detail:t}))}}))))));
+    };
+
+    function getToolDetails(tool) {
+      const map = {
+        "pdf-word": "Our free PDF to Word converter preserves formatting and detects tables. Since everything runs in your browser, your document never leaves your device.",
+        "pdf-excel": "Extract tables from PDFs into spreadsheets with smart detection. No upload required – all processing is local.",
+        "pdf-ppt": "Turn PDF pages into presentation slides with automatic text pagination. Works completely offline.",
+        "word-pdf": "Convert your Word documents to PDF with proper pagination. Our browser‑based engine creates clean, print‑ready PDFs.",
+        "excel-pdf": "Convert Excel spreadsheets to PDF without cutting off rows. Long sheets are automatically paginated.",
+        "merge": "Combine multiple PDF files into one document instantly. Your documents stay private.",
+        "split": "Split a PDF into individual pages or custom ranges. Fast and offline.",
+        "compress": "Reduce PDF file size using standard object stream compression or strong image down‑sampling.",
+        "protect": "Add a password to your PDF with strong encryption. The file remains on your computer.",
+        "ai-chat": "Chat with your PDF using our on‑device neural model. No internet required. Your data remains strictly private.",
+      };
+      return map[tool.id] || `SGN PDF House's free ${tool.name} tool runs entirely in your browser. No uploads, no ads, no tracking.`;
+    }
+
+    const HomePage = ({ onSelect }) => {
+      const [search,setSearch] = useState(""); const [activeCat,setActiveCat] = useState("all");
+      const filtered = TOOLS.filter(t=>{const q=search.toLowerCase();return (!q||t.name.toLowerCase().includes(q)||t.desc.toLowerCase().includes(q)||t.cat.includes(q))&&(activeCat==="all"||t.cat===activeCat)});
+      return React.createElement('div',{style:{minHeight:"100vh",color:T.text}},
+        React.createElement('div',{style:{padding:"64px 24px 48px",textAlign:"center",maxWidth:900,margin:"0 auto"}},
+          React.createElement(Badge,{color:T.ai},"✨ Free & Private"),
+          React.createElement('h1',{style:{fontSize:52,fontWeight:800,background:"linear-gradient(135deg,#E8EEF7,#9CA3AF)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",marginBottom:16}},"Every PDF tool.",React.createElement('br'),"Completely free."),
+          React.createElement('p',{style:{color:T.textSub,fontSize:17,marginBottom:32}},"40+ tools, no watermarks, no uploads. Activate AI for smart summaries, chat, and translations."),
+          React.createElement('div',{style:{display:"flex",gap:16,justifyContent:"center",marginBottom:40,flexWrap:"wrap"}},
+            [{n:"40+",l:"Tools"},{n:"100%",l:"Private"},{n:"0",l:"Uploads"},{n:"AI",l:"On‑Device"}].map(s=>React.createElement('div',{key:s.l,style:{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:10,padding:"12px 20px",minWidth:80}},React.createElement('div',{style:{fontSize:22,fontWeight:700}},s.n),React.createElement('div',{style:{fontSize:11,color:T.textMuted}},s.l)))),
+          React.createElement('div',{style:{maxWidth:520,margin:"0 auto",position:"relative"}},
+            React.createElement(Search,{size:16,style:{position:"absolute",left:14,top:"50%",transform:"translateY(-50%)",color:T.textMuted}}),
+            React.createElement('input',{value:search,onChange:e=>setSearch(e.target.value),placeholder:"Search tools…",style:{width:"100%",boxSizing:"border-box",background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:10,padding:"14px 14px 14px 42px",color:T.text,fontSize:15,outline:"none"}}),
+            search&&React.createElement('button',{onClick:()=>setSearch(""),style:{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",color:T.textSub}},React.createElement(X,{size:15})))),
+        React.createElement('div',{style:{maxWidth:1100,margin:"0 auto",padding:"0 24px 24px",overflowX:"auto"}},
+          React.createElement('div',{style:{display:"flex",gap:8,paddingBottom:4}},
+            [{id:"all",name:"All",emoji:"✨",color:T.primary},...CATS].map(c=>React.createElement('button',{key:c.id,onClick:()=>setActiveCat(c.id),style:{background:activeCat===c.id?c.color+"22":"transparent",border:`1px solid ${activeCat===c.id?c.color:T.border}`,borderRadius:20,padding:"7px 16px",color:activeCat===c.id?c.color:T.textSub,fontSize:13,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}},c.emoji," ",c.name)))),
+        React.createElement('div',{style:{maxWidth:1100,margin:"0 auto",padding:"0 24px 48px"}},
+          activeCat==="all"&&!search? CATS.map(cat=>{const catTools=TOOLS.filter(t=>t.cat===cat.id);return React.createElement('div',{key:cat.id,style:{marginBottom:40}},
+            React.createElement('div',{style:{display:"flex",alignItems:"center",gap:12,marginBottom:18}},React.createElement('div',{style:{fontSize:22}},cat.emoji),React.createElement('div',null,React.createElement('h2',{style:{margin:0,fontSize:18,fontWeight:700}},cat.name),React.createElement('p',{style:{margin:0,fontSize:12,color:T.textSub}},cat.desc))),
+            React.createElement('div',{style:{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(190px,1fr))",gap:12}},catTools.map(t=>React.createElement(ToolCard,{key:t.id,tool:t,onClick:onSelect}))))})
+          : React.createElement('div',null,
+              React.createElement('p',{style:{color:T.textSub,fontSize:13,marginBottom:16}},filtered.length," tool",filtered.length!==1?"s":""),
+              React.createElement('div',{style:{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(190px,1fr))",gap:12}},filtered.map(t=>React.createElement(ToolCard,{key:t.id,tool:t,onClick:onSelect}))),
+              !filtered.length&&React.createElement('div',{style:{textAlign:"center",padding:"60px 20px",color:T.textMuted}},"No tools found."))),
+        React.createElement('div',{style:{maxWidth:1100,margin:"0 auto 24px",padding:"0 24px"}},
+          React.createElement('h2',{style:{fontSize:24,fontWeight:700,marginBottom:20,textAlign:"center"}},"Common Questions"),
+          React.createElement('div',{style:{display:"grid",gap:16,maxWidth:800,margin:"0 auto"}},
+            [
+              {q:"Is it really free?",a:"Yes – all tools are completely free."},
+              {q:"Where do my files go?",a:"Nowhere. Everything stays in your browser."},
+              {q:"How does Smart AI work?",a:"Click 'Activate AI' in the header to load a tiny private model into your browser. No data leaves your device."},
+              {q:"Which browsers can I use?",a:"Chrome, Firefox, Edge, or Safari."},
+              {q:"Can I use this for work?",a:"Absolutely. No restrictions."}
+            ].map((item,i)=>React.createElement('details',{key:i,style:{background:T.bgCard,borderRadius:10,padding:"16px 20px",cursor:"pointer"}},
+              React.createElement('summary',{style:{fontWeight:600,color:T.text}},item.q),
+              React.createElement('p',{style:{color:T.textSub,fontSize:14,marginTop:8}},item.a)))
+          )),
+        React.createElement('footer',{style:{borderTop:`1px solid ${T.border}`,padding:"32px 24px",textAlign:"center",color:T.textMuted,fontSize:13,background:T.bgCard}},
+          React.createElement('div',{style:{marginBottom:12}},"© 2025 SGN PDF House · 40+ Free Tools"),
+          React.createElement('div',{style:{display:"flex",gap:20,justifyContent:"center",flexWrap:"wrap"}},
+            React.createElement('button',{onClick:()=>window.history.pushState(null,'','/about'),style:{background:'none',border:'none',color:T.textSub,cursor:'pointer',fontSize:13}},"About"),
+            React.createElement('button',{onClick:()=>window.history.pushState(null,'','/privacy'),style:{background:'none',border:'none',color:T.textSub,cursor:'pointer',fontSize:13}},"Privacy"),
+            React.createElement('button',{onClick:()=>window.history.pushState(null,'','/terms'),style:{background:'none',border:'none',color:T.textSub,cursor:'pointer',fontSize:13}},"Terms"),
+            React.createElement('button',{onClick:()=>window.history.pushState(null,'','/contact'),style:{background:'none',border:'none',color:T.textSub,cursor:'pointer',fontSize:13}},"Contact")
+          ))
+      );
+    };
+
+    const AboutPage = ({ onBack }) => React.createElement('div',{style:{maxWidth:700,margin:"0 auto",padding:"40px 24px",color:T.text}},
+      React.createElement('button',{onClick:onBack,style:{background:"none",border:"none",color:T.textSub,cursor:"pointer",marginBottom:24}},React.createElement(ChevronLeft,{size:16})," Back"),
+      React.createElement('h1',{style:{fontSize:28,fontWeight:700,marginBottom:16}},"About SGN PDF House"),
+      React.createElement('p',{style:{lineHeight:1.7,marginBottom:16}},`SGN PDF House is a free, private, and ad‑free PDF toolkit that runs entirely in your browser. No uploads, no servers, no tracking.`),
+      React.createElement('p',{style:{lineHeight:1.7}},"We believe that essential document tools should be accessible to everyone, without compromising privacy or security.")
+    );
+    const PrivacyPage = ({ onBack }) => React.createElement('div',{style:{maxWidth:700,margin:"0 auto",padding:"40px 24px",color:T.text}},
+      React.createElement('button',{onClick:onBack,style:{background:"none",border:"none",color:T.textSub,cursor:"pointer",marginBottom:24}},React.createElement(ChevronLeft,{size:16})," Back"),
+      React.createElement('h1',{style:{fontSize:28,fontWeight:700,marginBottom:16}},"Privacy Policy"),
+      React.createElement('p',{style:{lineHeight:1.7,marginBottom:16}},"Your files never leave your device. All processing happens locally in your browser. We do not collect, store, or share any personal data."),
+      React.createElement('p',{style:{lineHeight:1.7}},"We use no cookies, no analytics, and no third‑party services that could track you.")
+    );
+    const TermsPage = ({ onBack }) => React.createElement('div',{style:{maxWidth:700,margin:"0 auto",padding:"40px 24px",color:T.text}},
+      React.createElement('button',{onClick:onBack,style:{background:"none",border:"none",color:T.textSub,cursor:"pointer",marginBottom:24}},React.createElement(ChevronLeft,{size:16})," Back"),
+      React.createElement('h1',{style:{fontSize:28,fontWeight:700,marginBottom:16}},"Terms of Service"),
+      React.createElement('p',{style:{lineHeight:1.7,marginBottom:16}},"SGN PDF House is provided as‑is, without warranty of any kind. Use the tools at your own risk."),
+      React.createElement('p',{style:{lineHeight:1.7}},"You are responsible for the files you process. Do not use this service for illegal activities.")
+    );
+    const ContactPage = ({ onBack }) => React.createElement('div',{style:{maxWidth:700,margin:"0 auto",padding:"40px 24px",color:T.text}},
+      React.createElement('button',{onClick:onBack,style:{background:"none",border:"none",color:T.textSub,cursor:"pointer",marginBottom:24}},React.createElement(ChevronLeft,{size:16})," Back"),
+      React.createElement('h1',{style:{fontSize:28,fontWeight:700,marginBottom:16}},"Contact"),
+      React.createElement('p',{style:{lineHeight:1.7}},"For inquiries, feedback, or support: ",React.createElement('a',{href:"mailto:contact@sgnpdf.house",style:{color:T.primary,textDecoration:"underline"}},"contact@sgnpdf.house"))
+    );
+
+    // ---- Header with Worker-based AI ----
+    const Header = ({ onHome }) => {
+      const [neuralProg, setNeuralProg] = useState(0);
+      const [aiStatus, setAiStatus] = useState('idle');
+      const [aiError, setAiError] = useState('');
+      const aiWorkerRef = useRef(null);
+
+      const loadAI = useCallback(() => {
+        if (aiStatus === 'loading' || aiStatus === 'ready') return;
+        setAiStatus('loading');
+        setAiError('');
+        setNeuralProg(0);
+        const worker = new Worker(aiWorkerURL);
+        aiWorkerRef.current = worker;
+        worker.onmessage = (e) => {
+          const { type, detail, error } = e.data;
+          if (type === 'PROGRESS') {
+            setNeuralProg(detail);
+          } else if (type === 'READY') {
+            setAiStatus('ready');
+            window.neuralAIReady = true;
+            window.aiEngineWorker = worker;
+          } else if (type === 'OFFLINE') {
+            setAiStatus('idle');
+            setNeuralProg(0);
+            window.neuralAIReady = false;
+            window.aiEngineWorker = null;
+            if (aiWorkerRef.current) {
+              aiWorkerRef.current.terminate();
+              aiWorkerRef.current = null;
+            }
+          } else if (type === 'ERROR') {
+            setAiStatus('error');
+            setAiError(error);
+            window.neuralAIReady = false;
+            window.aiEngineWorker = null;
+            if (aiWorkerRef.current) {
+              aiWorkerRef.current.terminate();
+              aiWorkerRef.current = null;
+            }
+          }
+        };
+        worker.postMessage({ type: 'ACTIVATE' });
+      }, [aiStatus]);
+
+      const deactivateAI = useCallback(() => {
+        if (aiWorkerRef.current) {
+          aiWorkerRef.current.postMessage({ type: 'DEACTIVATE' });
+        }
+      }, []);
+
+      useEffect(() => {
+        const handler = (e) => setNeuralProg(e.detail);
+        window.addEventListener('aiProgress', handler);
+        return () => window.removeEventListener('aiProgress', handler);
+      }, []);
+
+      return (
+        <div style={{position:"sticky",top:0,zIndex:100,background:T.bgCard+"EE",backdropFilter:"blur(12px)",borderBottom:`1px solid ${T.border}`,padding:"0 24px",height:60,display:"flex",alignItems:"center"}}>
+          <button onClick={onHome} style={{background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:10}}>
+            <div style={{width:32,height:32,background:T.grad,borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center"}}><FileText size={16} color="white"/></div>
+            <span style={{fontWeight:800,fontSize:17,color:T.text}}>SGN PDF<span style={{color:T.primary}}>House</span></span>
+          </button>
+          <div style={{flex:1}} />
+          {aiStatus === 'idle' && (
+            <button onClick={loadAI} style={{ background: T.ai, border: 'none', borderRadius: 6, padding: '5px 12px', color: 'white', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
+              Activate AI
+            </button>
+          )}
+          {aiStatus === 'loading' && <span style={{ color: T.textSub, fontSize: 12 }}>AI Model: {neuralProg}%</span>}
+          {aiStatus === 'ready' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Badge color={T.success}>AI Ready</Badge>
+              <button onClick={deactivateAI} style={{ background: 'transparent', border: `1px solid ${T.border}`, borderRadius: 6, padding: '4px 10px', color: T.textSub, cursor: 'pointer', fontSize: 11 }}>
+                Deactivate
+              </button>
+            </div>
+          )}
+          {aiStatus === 'error' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span title={aiError} onClick={() => alert('AI Error: ' + aiError)} style={{ color: T.err, fontSize: 12, cursor: 'pointer' }}>AI failed</span>
+              <button onClick={loadAI} style={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 4, padding: '2px 8px', color: T.textSub, fontSize: 10, cursor: 'pointer' }}>Retry</button>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    const App = () => {
+      const [view,setView] = useState("home");
+      const [tool,setTool] = useState(null);
+      const select = t => { setTool(t); window.history.pushState(null,'','/tool/'+t.id); setView("tool"); window.scrollTo(0,0); };
+      useEffect(() => {
+        const handlePath = () => {
+          const path = window.location.pathname;
+          if (path.startsWith('/tool/')) {
+            const id = path.replace('/tool/','');
+            const found = TOOLS.find(t => t.id === id);
+            if (found) { setTool(found); setView('tool'); return; }
+          }
+          if (['/about','/privacy','/terms','/contact'].includes(path)) {
+            setView(path.slice(1)); return;
+          }
+          setView('home');
+          setTool(null);
+        };
+        window.addEventListener('popstate', handlePath);
+        handlePath();
+        return () => window.removeEventListener('popstate', handlePath);
+      }, []);
+
+      useEffect(() => {
+        if (view === 'tool' && tool) {
+          document.title = tool.name + ' – SGN PDF House';
+          const meta = document.querySelector('meta[name="description"]');
+          if (meta) meta.setAttribute('content', tool.desc + ' | SGN PDF House – Private, free PDF tools.');
+        } else if (['about','privacy','terms','contact'].includes(view)) {
+          const titles = { about:'About', privacy:'Privacy Policy', terms:'Terms of Service', contact:'Contact' };
+          document.title = titles[view] + ' – SGN PDF House';
+          const meta = document.querySelector('meta[name="description"]');
+          if (meta) meta.setAttribute('content', 'SGN PDF House – Free private PDF suite. ' + titles[view] + '.');
+        } else {
+          document.title = 'SGN PDF House – Free Private PDF Suite';
+          const meta = document.querySelector('meta[name="description"]');
+          if (meta) meta.setAttribute('content', '40+ PDF tools, completely private, no uploads. Convert, merge, split, compress, OCR, AI chat with your PDF, and more.');
+        }
+      }, [view, tool]);
+
+      useEffect(()=>{const h=e=>select(e.detail);document.addEventListener("selectTool",h);return ()=>document.removeEventListener("selectTool",h);},[]);
+
+      return React.createElement('div',{style:{minHeight:"100vh",position:"relative",zIndex:1}},
+        React.createElement(Header,{onHome:()=>{ window.history.pushState(null,'','/'); setView('home'); }}),
+        React.createElement('div',{style:{animation:"fadeIn 0.3s ease"}},
+          view==="home"&&React.createElement(HomePage,{onSelect:select}),
+          view==="tool"&&tool&&React.createElement(ToolPage,{tool,onBack:()=>{ window.history.pushState(null,'','/'); setView('home'); }}),
+          view==="about"&&React.createElement(AboutPage,{onBack:()=>{ window.history.pushState(null,'','/'); setView('home'); }}),
+          view==="privacy"&&React.createElement(PrivacyPage,{onBack:()=>{ window.history.pushState(null,'','/'); setView('home'); }}),
+          view==="terms"&&React.createElement(TermsPage,{onBack:()=>{ window.history.pushState(null,'','/'); setView('home'); }}),
+          view==="contact"&&React.createElement(ContactPage,{onBack:()=>{ window.history.pushState(null,'','/'); setView('home'); }})
+        )
+      );
+    };
+
+    ReactDOM.render(React.createElement(App), document.getElementById('root'));
+  </script>
+</body>
 </html>
