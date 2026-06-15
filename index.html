@@ -308,12 +308,86 @@
       });
     }
 
-    async function ensureDocx() { if (window.docx) return; try { await loadScript('https://cdn.jsdelivr.net/npm/docx@8.2.0/build/index.umd.js'); } catch(e) { try { await loadScript('https://unpkg.com/docx@8.2.0/build/index.umd.js'); } catch(e2) { throw new Error('Word library failed to load. Please check your internet connection or try again later.'); } } }
-    async function ensureXlsx() { if (window.XLSX) return; try { await loadScript('https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js'); } catch(e) { try { await loadScript('https://unpkg.com/xlsx@0.20.1/dist/xlsx.full.min.js'); } catch(e2) { throw new Error('Excel library failed to load. Please check your internet connection.'); } } }
-    async function ensurePptx() { if (window.PptxGenJS) return; try { await loadScript('https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js'); } catch(e) { try { await loadScript('https://unpkg.com/pptxgenjs@3.12.0/dist/pptxgen.bundle.js'); } catch(e2) { throw new Error('PowerPoint library failed to load. Please check your internet connection.'); } } }
-    async function ensureMammoth() { if (window.mammoth) return; try { await loadScript('https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js'); } catch(e) { try { await loadScript('https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js'); } catch(e2) { throw new Error('Word‑to‑PDF library failed to load. Please check your internet connection.'); } } }
-    async function ensureHtml2canvas() { if (window.html2canvas) return; try { await loadScript('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'); } catch(e) { try { await loadScript('https://html2canvas.hertzen.com/dist/html2canvas.min.js'); } catch(e2) { throw new Error('HTML‑to‑PDF library failed to load. Please check your internet connection.'); } } }
+    // ---- Robust library loaders with global verification ----
+    async function tryLoadScript(libName, urls, checkFn) {
+      let lastError = null;
+      for (const url of urls) {
+        try {
+          await loadScript(url);
+          if (checkFn && !checkFn()) {
+            console.warn(`${libName} loaded from ${url} but global not set. Trying next...`);
+            continue;
+          }
+          return;
+        } catch (e) {
+          lastError = e;
+          console.warn(`Failed to load ${libName} from ${url}: ${e.message}`);
+        }
+      }
+      throw new Error(`${libName} library failed to load from all CDN sources. Last error: ${lastError?.message || 'Unknown'}`);
+    }
 
+    async function ensureDocx() {
+      if (window.docx) return;
+      await tryLoadScript('docx', [
+        'https://cdn.jsdelivr.net/npm/docx@8.2.0/build/index.umd.js',
+        'https://unpkg.com/docx@8.2.0/build/index.umd.js',
+        'https://cdn.jsdelivr.net/npm/docx@8.2.0/build/index.umd.min.js',
+        'https://esm.sh/docx@8.2.0/build/index.umd.js',
+        'https://cdn.skypack.dev/docx@8.2.0',
+        'https://unpkg.com/docx@8.2.0/build/index.umd.min.js'
+      ], () => typeof window.docx !== 'undefined' && window.docx.Document);
+    }
+
+    async function ensureXlsx() {
+      if (window.XLSX) return;
+      await tryLoadScript('xlsx', [
+        'https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js',
+        'https://unpkg.com/xlsx@0.20.1/dist/xlsx.full.min.js',
+        'https://cdn.jsdelivr.net/npm/xlsx@0.20.1/dist/xlsx.full.min.js',
+        'https://esm.sh/xlsx@0.20.1/dist/xlsx.full.min.js',
+        'https://cdn.skypack.dev/xlsx@0.20.1',
+        'https://unpkg.com/xlsx@0.20.1/dist/xlsx.min.js'
+      ], () => typeof window.XLSX !== 'undefined');
+    }
+
+    async function ensurePptx() {
+      if (window.PptxGenJS) return;
+      await tryLoadScript('pptxgenjs', [
+        'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js',
+        'https://unpkg.com/pptxgenjs@3.12.0/dist/pptxgen.bundle.js',
+        'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/libs/pptxgen.bundle.js',
+        'https://esm.sh/pptxgenjs@3.12.0/dist/pptxgen.bundle.js',
+        'https://cdn.skypack.dev/pptxgenjs@3.12.0',
+        'https://unpkg.com/pptxgenjs@3.12.0/dist/pptxgen.bundle.min.js'
+      ], () => typeof window.PptxGenJS !== 'undefined');
+    }
+
+    async function ensureMammoth() {
+      if (window.mammoth) return;
+      await tryLoadScript('mammoth', [
+        'https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js',
+        'https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js',
+        'https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.js',
+        'https://esm.sh/mammoth@1.6.0/mammoth.browser.min.js',
+        'https://cdn.skypack.dev/mammoth@1.6.0',
+        'https://unpkg.com/mammoth@1.6.0/mammoth.browser.js'
+      ], () => typeof window.mammoth !== 'undefined');
+    }
+
+    async function ensureHtml2canvas() {
+      if (window.html2canvas) return;
+      await tryLoadScript('html2canvas', [
+        'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js',
+        'https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js',
+        'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.js',
+        'https://esm.sh/html2canvas@1.4.1/dist/html2canvas.min.js',
+        'https://cdn.skypack.dev/html2canvas@1.4.1',
+        'https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.js'
+      ], () => typeof window.html2canvas !== 'undefined');
+    }
+
+    // ---- PDF Processors (all fully defined) ----
     const pdfToDocx = async (files, opts, prog) => {
       await ensureDocx();
       const pdfjs = window.pdfjsLib; prog(10);
@@ -1007,19 +1081,25 @@
           throw new Error("This PDF is severely damaged and cannot be repaired in the browser.");
         }
       },
+      // FIXED batch: iterate over all returned blobs
       batch: async (files, opts, prog) => {
-        const op = opts.op||"Compress all";
+        const op = opts.op || "Compress all";
         const JSZip = window.JSZip; const zip = new JSZip();
-        for (let i=0;i<files.length;i++) {
-          prog((i/files.length)*80);
-          const file=files[i]; let result;
-          if (op.includes("Compress")) result=await procs.compress([file],{level:"Standard (quick)"},()=>{});
-          else if (op.includes("Watermark")) result=await procs.watermark([file],{text:"BATCH",size:"Medium",opacity:30,pos:"Diagonal center",color:"Gray"},()=>{});
-          else if (op.includes("JPG")) result=await procs["pdf-jpg"]([file],{dpi:"Better (150 DPI)",quality:90},()=>{});
-          else if (op.includes("page numbers")) result=await procs["page-nums"]([file],{pos:"Bottom Center",start:1,fmt:"1, 2, 3"},()=>{});
-          if (result&&result[0]&&result[0].blob) zip.file(result[0].name,result[0].blob);
+        for (let i = 0; i < files.length; i++) {
+          prog((i / files.length) * 80);
+          const file = files[i]; let result;
+          if (op.includes("Compress")) result = await procs.compress([file], { level: "Standard (quick)" }, () => {});
+          else if (op.includes("Watermark")) result = await procs.watermark([file], { text: "BATCH", size: "Medium", opacity: 30, pos: "Diagonal center", color: "Gray" }, () => {});
+          else if (op.includes("JPG")) result = await procs["pdf-jpg"]([file], { dpi: "Better (150 DPI)", quality: 90 }, () => {});
+          else if (op.includes("page numbers")) result = await procs["page-nums"]([file], { pos: "Bottom Center", start: 1, fmt: "1, 2, 3" }, () => {});
+          if (result) {
+            // iterate over all returned blobs (e.g., multiple pages from pdf-jpg)
+            for (const item of result) {
+              if (item && item.blob) zip.file(item.name, item.blob);
+            }
+          }
         }
-        const blob = await zip.generateAsync({ type:"blob" });
+        const blob = await zip.generateAsync({ type: "blob" });
         return [{ blob, name: "batch-output.zip" }];
       },
       metadata: async (files, opts, prog) => {
@@ -1347,7 +1427,7 @@
       "ai-chat": chatWithPdf,
     };
 
-    // ---- UI Components (unchanged, fully included) ----
+    // ---- UI Components ----
     const ReorderModal = ({ file, onSave, onCancel }) => {
       const [pages, setPages] = useState([]);
       const [loading, setLoading] = useState(true);
@@ -1579,8 +1659,8 @@
         "pdf-word": "Our free PDF to Word converter preserves formatting and detects tables. Since everything runs in your browser, your document never leaves your device.",
         "pdf-excel": "Extract tables from PDFs into spreadsheets with smart detection. No upload required – all processing is local.",
         "pdf-ppt": "Turn PDF pages into presentation slides with automatic text pagination. Works completely offline.",
-        "word-pdf": "Convert your Word documents to PDF with proper pagination. Our browser‑based engine creates clean, print‑ready PDFs.",
-        "excel-pdf": "Convert Excel spreadsheets to PDF without cutting off rows. Long sheets are automatically paginated.",
+        "word-pdf": "Convert your Word documents to PDF with proper pagination. Our browser‑based engine creates clean, print‑ready PDFs. Note: text will not be selectable – the output is an image of the document.",
+        "excel-pdf": "Convert Excel spreadsheets to PDF without cutting off rows. Long sheets are automatically paginated. Note: text will not be selectable.",
         "merge": "Combine multiple PDF files into one document instantly. Your documents stay private.",
         "split": "Split a PDF into individual pages or custom ranges. Fast and offline.",
         "compress": "Reduce PDF file size using standard object stream compression or strong image down‑sampling.",
